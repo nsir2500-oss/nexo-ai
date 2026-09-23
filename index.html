@@ -360,50 +360,68 @@ sendMessage();
 
 async function sendMessage(){
 
-const input=document.getElementById("message");
-const messages=document.getElementById("messages");
+  const input = document.getElementById("message");
+  const messages = document.getElementById("messages");
 
-if(!input||!input.value.trim())return;
+  if (!input || !input.value.trim()) return;
 
-const message=input.value.trim();
+  const message = input.value.trim();
 
-messages.innerHTML+=`<div class="msg user">${escapeHTML(message)}</div>`;
-input.value="";
+  messages.innerHTML += `
+    <div class="msg user">${escapeHTML(message)}</div>
+  `;
 
-const loading=document.createElement("div");
-loading.className="msg ai";
-loading.textContent="NEXO is thinking...";
-messages.appendChild(loading);
-messages.scrollTop=messages.scrollHeight;
+  input.value = "";
 
-try{
+  const loading = document.createElement("div");
+  loading.className = "msg ai";
+  loading.textContent = "NEXO is thinking...";
+  messages.appendChild(loading);
 
-const response=await fetch(BACKEND,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message})
-});
+  messages.scrollTop = messages.scrollHeight;
 
-const data=await response.json();
+  try {
 
-loading.textContent=data.reply || ("Backend Error: " + (data.error || "Unknown error"));
+    const response = await fetch(BACKEND, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: message
+      })
+    });
 
-historyData.push({
-message:message,
-reply:data.reply||""
-});
+    const data = await response.json();
 
-localStorage.setItem("nexo_history",JSON.stringify(historyData));
+    if (!response.ok) {
+      loading.textContent =
+        "Backend Error: " + (data.error || "Unknown error");
+      return;
+    }
 
-}catch(error){
+    loading.textContent =
+      data.reply || "NEXO received an empty response.";
 
-loading.textContent="Connection error. Please try again.";
+    historyData.push({
+      message: message,
+      reply: data.reply || ""
+    });
 
+    localStorage.setItem(
+      "nexo_history",
+      JSON.stringify(historyData)
+    );
+
+  } catch (error) {
+
+    loading.textContent =
+      "Connection Error: " + error.message;
+
+  }
+
+  messages.scrollTop = messages.scrollHeight;
 }
-
-messages.scrollTop=messages.scrollHeight;
-}
-
 function startBuilder(){
 
 show("chat");
