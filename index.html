@@ -1122,177 +1122,329 @@ website
 
 }
 
-
 /* CREATE WEBSITE */
 
-function createWebsite(type,websiteName,prompt){
+function createWebsite(type, websiteName, prompt){
 
-let subtitle="";
-let button="Get Started";
-let sectionTitle="";
-let cards="";
-let accent="#111827";
+const originalPrompt = prompt || "";
+const text = originalPrompt.toLowerCase();
 
-if(type==="restaurant"){
+let accent = "#2563eb";
+let button = "Get Started";
 
-subtitle="Fresh food, unforgettable taste and a dining experience made for you.";
-button="Order Now";
-sectionTitle="Our Menu";
-accent="#991b1b";
+if(text.includes("red")) accent="#dc2626";
+else if(text.includes("blue")) accent="#2563eb";
+else if(text.includes("green")) accent="#16a34a";
+else if(text.includes("purple")) accent="#7c3aed";
+else if(text.includes("orange")) accent="#ea580c";
+else if(text.includes("pink")) accent="#db2777";
+else if(text.includes("black")) accent="#111827";
 
-cards=`
+let subtitle = "A modern website created according to your idea.";
+let sectionTitle = "Explore";
 
+let cards = "";
+let aboutText = "";
+let extraSection = "";
+
+if(type === "restaurant"){
+
+button = "View Menu";
+sectionTitle = "Our Menu";
+
+subtitle = text.includes("premium")
+? "A premium dining experience with delicious food, elegant atmosphere and unforgettable taste."
+: "Delicious food, fresh ingredients and a memorable dining experience.";
+
+aboutText =
+"Welcome to " + websiteName +
+". We bring together great taste, quality ingredients and a comfortable dining experience.";
+
+cards = `
 <div class="card">
-<h3>🍔 Signature Burger</h3>
-<p>Fresh ingredients, premium cheese and our special house sauce.</p>
-<strong>₹199</strong>
+<h3>Signature Starters</h3>
+<p>Freshly prepared starters made with quality ingredients.</p>
 </div>
 
 <div class="card">
-<h3>🍕 Special Pizza</h3>
-<p>Hot, cheesy and freshly prepared with premium toppings.</p>
-<strong>₹299</strong>
+<h3>Main Course</h3>
+<p>Delicious main-course dishes prepared with authentic flavours.</p>
 </div>
 
 <div class="card">
-<h3>🍛 Royal Biryani</h3>
-<p>Aromatic rice with rich spices and authentic flavour.</p>
-<strong>₹249</strong>
+<h3>Chef Specials</h3>
+<p>Special dishes carefully created by our kitchen team.</p>
 </div>
 
 <div class="card">
-<h3>🍝 Creamy Pasta</h3>
-<p>Delicious pasta prepared with our signature creamy sauce.</p>
-<strong>₹229</strong>
+<h3>Drinks</h3>
+<p>Refreshing beverages to complete your meal.</p>
 </div>
 
 <div class="card">
-<h3>🥗 Fresh Salad</h3>
-<p>Fresh vegetables with a light and healthy dressing.</p>
-<strong>₹149</strong>
+<h3>Desserts</h3>
+<p>Sweet and delicious desserts for the perfect finish.</p>
 </div>
 
 <div class="card">
-<h3>🍰 Special Dessert</h3>
-<p>A sweet finish to make your dining experience complete.</p>
-<strong>₹129</strong>
+<h3>Family Dining</h3>
+<p>A comfortable place to enjoy food with friends and family.</p>
 </div>
-
 `;
 
+extraSection = `
+<section class="section reviews">
+<h2>What Our Customers Say</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Great Experience</h3>
+<p>“Amazing food and a wonderful atmosphere.”</p>
+<strong>★★★★★</strong>
+</div>
+
+<div class="card">
+<h3>Delicious Food</h3>
+<p>“Everything was fresh and beautifully prepared.”</p>
+<strong>★★★★★</strong>
+</div>
+
+<div class="card">
+<h3>Highly Recommended</h3>
+<p>“A great place for family and friends.”</p>
+<strong>★★★★★</strong>
+</div>
+
+</div>
+</section>
+`;
 }
 
-else if(type==="portfolio"){
+else if(type === "portfolio"){
 
-subtitle="Creative work, professional editing and digital experiences.";
-button="View My Work";
-sectionTitle="Featured Projects";
-accent="#312e81";
+button = "View My Work";
+sectionTitle = "My Work";
 
-cards=`
+subtitle = text.includes("video")
+? "Professional video editing, storytelling and creative digital content."
+: "A creative portfolio showcasing skills, projects and professional work.";
 
+aboutText =
+"Welcome to " + websiteName +
+". This portfolio showcases creative work, professional skills and selected projects.";
+
+cards = `
 <div class="card">
-<h3>🎬 Video Editing</h3>
-<p>Professional short-form and long-form video editing.</p>
+<h3>Video Editing</h3>
+<p>Professional edits for YouTube, Instagram, Shorts and digital content.</p>
 </div>
 
 <div class="card">
-<h3>🎨 Graphic Design</h3>
-<p>Modern thumbnails, social media designs and branding.</p>
+<h3>Graphic Design</h3>
+<p>Creative thumbnails, posters, social media designs and branding.</p>
 </div>
 
 <div class="card">
-<h3>📱 Social Media</h3>
-<p>Creative content designed to attract and engage audiences.</p>
+<h3>Content Creation</h3>
+<p>Engaging digital content designed for modern audiences.</p>
 </div>
 
+<div class="card">
+<h3>Branding</h3>
+<p>Clean visual identity and creative branding solutions.</p>
+</div>
+
+<div class="card">
+<h3>Social Media</h3>
+<p>Creative content concepts for growing online presence.</p>
+</div>
+
+<div class="card">
+<h3>Creative Projects</h3>
+<p>A collection of selected personal and professional projects.</p>
+</div>
 `;
 
+extraSection = `
+<section class="section projects">
+<h2>Featured Projects</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Project One</h3>
+<p>Creative project showcase with professional presentation.</p>
+<a class="smallBtn" href="#contact">View Project</a>
+</div>
+
+<div class="card">
+<h3>Project Two</h3>
+<p>Another selected project demonstrating creative skills.</p>
+<a class="smallBtn" href="#contact">View Project</a>
+</div>
+
+<div class="card">
+<h3>Project Three</h3>
+<p>A modern project created for digital audiences.</p>
+<a class="smallBtn" href="#contact">View Project</a>
+</div>
+
+</div>
+</section>
+`;
 }
 
-else if(type==="shopping"){
+else if(type === "shopping"){
 
-subtitle="Discover trending products, great value and a smooth shopping experience.";
-button="Shop Now";
-sectionTitle="Featured Products";
-accent="#075985";
+button = "Shop Now";
+sectionTitle = "Featured Products";
 
-cards=`
+subtitle = text.includes("premium")
+? "Discover premium products, modern shopping and a smooth customer experience."
+: "Discover products, explore categories and enjoy a simple shopping experience.";
 
+aboutText =
+"Welcome to " + websiteName +
+". Explore our collection of products and discover something you'll love.";
+
+cards = `
 <div class="card">
-<h3>🎧 Wireless Headphones</h3>
-<p>Premium sound and comfortable all-day design.</p>
-<strong>₹1,499</strong>
+<h3>Electronics</h3>
+<p>Explore modern electronics and useful technology products.</p>
+<a class="smallBtn" href="#products">Explore</a>
 </div>
 
 <div class="card">
-<h3>⌚ Smart Watch</h3>
-<p>Modern design with smart everyday features.</p>
-<strong>₹2,999</strong>
+<h3>Fashion</h3>
+<p>Modern clothing, footwear and accessories for everyday style.</p>
+<a class="smallBtn" href="#products">Explore</a>
 </div>
 
 <div class="card">
-<h3>👟 Sneakers</h3>
-<p>Comfortable and stylish sneakers for everyday use.</p>
-<strong>₹1,999</strong>
+<h3>Mobile Accessories</h3>
+<p>Useful accessories and everyday essentials for your devices.</p>
+<a class="smallBtn" href="#products">Explore</a>
 </div>
 
 <div class="card">
-<h3>📱 Mobile Accessories</h3>
-<p>Useful accessories for your everyday devices.</p>
-<strong>₹499</strong>
+<h3>Home & Kitchen</h3>
+<p>Products designed to make your home more comfortable.</p>
+<a class="smallBtn" href="#products">Explore</a>
 </div>
 
+<div class="card">
+<h3>Beauty</h3>
+<p>Beauty and personal-care products for everyday use.</p>
+<a class="smallBtn" href="#products">Explore</a>
+</div>
+
+<div class="card">
+<h3>Gaming</h3>
+<p>Gaming products and accessories for your setup.</p>
+<a class="smallBtn" href="#products">Explore</a>
+</div>
 `;
 
+extraSection = `
+<section class="section" id="products">
+<h2>Why Shop With Us?</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Quality Products</h3>
+<p>Discover products selected for a modern shopping experience.</p>
+</div>
+
+<div class="card">
+<h3>Easy Shopping</h3>
+<p>Browse categories and find products quickly.</p>
+</div>
+
+<div class="card">
+<h3>Customer Support</h3>
+<p>We're here to help you with your shopping experience.</p>
+</div>
+
+</div>
+</section>
+`;
 }
 
 else{
 
-subtitle="Professional solutions, modern design and reliable service for your business.";
-button="Contact Us";
-sectionTitle="Our Services";
-accent="#1e3a8a";
+button = "Contact Us";
+sectionTitle = "Our Services";
 
-cards=`
+subtitle = text.includes("technology") || text.includes("tech")
+? "Modern technology solutions designed to help businesses grow."
+: "Professional solutions designed around your business needs.";
 
+aboutText =
+"Welcome to " + websiteName +
+". We provide professional services focused on quality, creativity and customer satisfaction.";
+
+cards = `
 <div class="card">
-<h3>🚀 Business Solutions</h3>
-<p>Practical digital solutions designed around your business.</p>
+<h3>Business Consulting</h3>
+<p>Practical ideas and solutions designed around your goals.</p>
 </div>
 
 <div class="card">
-<h3>⭐ Premium Service</h3>
-<p>Professional quality and attention to detail.</p>
+<h3>Digital Solutions</h3>
+<p>Modern digital solutions for businesses and brands.</p>
 </div>
 
 <div class="card">
-<h3>💡 Creative Strategy</h3>
-<p>Modern ideas to help your brand stand out.</p>
+<h3>Creative Strategy</h3>
+<p>Creative strategies that help your business stand out.</p>
 </div>
 
+<div class="card">
+<h3>Marketing</h3>
+<p>Modern marketing ideas to reach the right audience.</p>
+</div>
+
+<div class="card">
+<h3>Professional Support</h3>
+<p>Reliable support and service whenever you need it.</p>
+</div>
+
+<div class="card">
+<h3>Growth Solutions</h3>
+<p>Smart solutions focused on long-term business growth.</p>
+</div>
 `;
 
+extraSection = `
+<section class="section">
+<h2>Why Choose Us?</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Professional</h3>
+<p>Focused on quality and professional service.</p>
+</div>
+
+<div class="card">
+<h3>Reliable</h3>
+<p>Clear communication and dependable support.</p>
+</div>
+
+<div class="card">
+<h3>Modern</h3>
+<p>Contemporary ideas designed for today's businesses.</p>
+</div>
+
+</div>
+</section>
+`;
 }
 
 
-/* COLOR FROM PROMPT */
-
-if(prompt.includes("red"))
-accent="#991b1b";
-
-if(prompt.includes("blue"))
-accent="#1d4ed8";
-
-if(prompt.includes("green"))
-accent="#166534";
-
-if(prompt.includes("purple"))
-accent="#6d28d9";
-
-if(prompt.includes("orange"))
-accent="#c2410c";
-
+/* WEBSITE */
 
 return `<!DOCTYPE html>
 
@@ -1302,8 +1454,7 @@ return `<!DOCTYPE html>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>${escapeHTML(websiteName)}</title>
 
@@ -1317,7 +1468,7 @@ padding:0
 
 body{
 font-family:Arial,sans-serif;
-background:#f5f5f5;
+background:#f8fafc;
 color:#171717
 }
 
@@ -1328,7 +1479,7 @@ align-items:center;
 justify-content:space-between;
 padding:0 7%;
 background:white;
-border-bottom:1px solid #eee;
+border-bottom:1px solid #e5e7eb;
 position:sticky;
 top:0;
 z-index:10
@@ -1336,28 +1487,30 @@ z-index:10
 
 .logo{
 font-size:23px;
-font-weight:800
+font-weight:800;
+color:${accent}
 }
 
 nav a{
 margin-left:22px;
 text-decoration:none;
-color:#444
+color:#444;
+font-weight:500
 }
 
 .hero{
-min-height:470px;
+min-height:500px;
 display:flex;
 align-items:center;
 justify-content:center;
 text-align:center;
-padding:50px 20px;
+padding:60px 20px;
 background:linear-gradient(135deg,${accent},#111827);
 color:white
 }
 
 .hero-content{
-max-width:800px
+max-width:850px
 }
 
 .hero h1{
@@ -1368,81 +1521,98 @@ margin-bottom:20px
 .hero p{
 font-size:20px;
 line-height:1.7;
-opacity:.9;
+opacity:.92;
 margin-bottom:30px
 }
 
 .btn{
 display:inline-block;
-padding:14px 26px;
+padding:15px 28px;
 background:white;
 color:#111;
-border-radius:9px;
+border-radius:10px;
 text-decoration:none;
 font-weight:bold
 }
 
 .section{
-padding:70px 7%;
+padding:75px 7%;
 background:white
 }
 
 .section h2{
 text-align:center;
-font-size:35px;
-margin-bottom:40px
+font-size:36px;
+margin-bottom:42px
 }
 
 .cards{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:22px;
+gap:24px;
 max-width:1100px;
 margin:auto
 }
 
 .card{
-padding:27px;
+padding:28px;
 border:1px solid #e5e7eb;
-border-radius:16px;
+border-radius:18px;
 background:white;
-box-shadow:0 8px 30px rgba(0,0,0,.06)
+box-shadow:0 8px 30px rgba(0,0,0,.06);
+transition:.2s
+}
+
+.card:hover{
+transform:translateY(-5px)
 }
 
 .card h3{
-margin-bottom:12px
+margin-bottom:12px;
+font-size:21px
 }
 
 .card p{
 color:#666;
-line-height:1.6;
-margin-bottom:12px
+line-height:1.7;
+margin-bottom:16px
 }
 
-.card strong{
-font-size:18px
+.smallBtn{
+display:inline-block;
+padding:9px 15px;
+border-radius:7px;
+background:${accent};
+color:white;
+text-decoration:none;
+font-weight:bold
 }
 
 .about{
-background:#f8fafc;
+background:#f1f5f9;
 text-align:center
 }
 
 .about p{
 max-width:800px;
 margin:auto;
-color:#666;
+color:#555;
 line-height:1.8;
 font-size:17px
 }
 
 .contact{
 text-align:center;
-background:#eef2ff
+background:#e0e7ff
+}
+
+.contact p{
+margin-bottom:25px;
+color:#555
 }
 
 footer{
-padding:28px;
+padding:30px;
 text-align:center;
 background:#111827;
 color:#aaa
@@ -1450,8 +1620,16 @@ color:#aaa
 
 @media(max-width:700px){
 
+.hero{
+min-height:430px
+}
+
 .hero h1{
 font-size:40px
+}
+
+.hero p{
+font-size:17px
 }
 
 .cards{
@@ -1466,7 +1644,105 @@ nav div:last-child{
 display:none
 }
 
+.section{
+padding:55px 20px
 }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+${escapeHTML(websiteName)}
+</div>
+
+<div>
+
+<a href="#home">Home</a>
+<a href="#about">About</a>
+<a href="#services">${sectionTitle}</a>
+<a href="#contact">Contact</a>
+
+</div>
+
+</nav>
+
+
+<section class="hero" id="home">
+
+<div class="hero-content">
+
+<h1>${escapeHTML(websiteName)}</h1>
+
+<p>${escapeHTML(subtitle)}</p>
+
+<a href="#services" class="btn">${escapeHTML(button)}</a>
+
+</div>
+
+</section>
+
+
+<section class="section about" id="about">
+
+<h2>About ${escapeHTML(websiteName)}</h2>
+
+<p>
+${escapeHTML(aboutText)}
+</p>
+
+</section>
+
+
+<section class="section" id="services">
+
+<h2>${escapeHTML(sectionTitle)}</h2>
+
+<div class="cards">
+
+${cards}
+
+</div>
+
+</section>
+
+
+${extraSection}
+
+
+<section class="section contact" id="contact">
+
+<h2>Let's Connect</h2>
+
+<p>
+Have a question or want to work with us?
+Get in touch with ${escapeHTML(websiteName)}.
+</p>
+
+<a href="mailto:contact@example.com" class="smallBtn">
+Contact Us
+</a>
+
+</section>
+
+
+<footer>
+
+© 2026 ${escapeHTML(websiteName)}. All rights reserved.
+
+</footer>
+
+</body>
+
+</html>`;
+}
+
 
 </style>
 
