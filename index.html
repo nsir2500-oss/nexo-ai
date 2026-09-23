@@ -6,7 +6,12 @@
 <title>NEXO — Your AI for Everything</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:#0b0d12;
@@ -14,7 +19,15 @@ body{
   height:100vh;
   overflow:hidden
 }
-.app{display:flex;height:100vh}
+
+button{
+  font-family:inherit
+}
+
+.app{
+  display:flex;
+  height:100vh
+}
 
 .sidebar{
   width:250px;
@@ -22,14 +35,17 @@ body{
   border-right:1px solid #252936;
   padding:18px 12px;
   display:flex;
-  flex-direction:column
+  flex-direction:column;
+  flex-shrink:0
 }
+
 .logo{
   font-size:27px;
   font-weight:800;
   padding:10px 14px 25px;
   letter-spacing:2px
 }
+
 .newchat{
   background:#fff;
   color:#111;
@@ -40,6 +56,7 @@ body{
   cursor:pointer;
   margin-bottom:15px
 }
+
 .nav button{
   width:100%;
   background:none;
@@ -52,35 +69,60 @@ body{
   cursor:pointer;
   font-size:15px
 }
-.nav button:hover{background:#1d212b;color:#fff}
-.bottom{margin-top:auto}
 
-.main{flex:1;display:flex;flex-direction:column}
+.nav button:hover{
+  background:#1d212b;
+  color:#fff
+}
+
+.bottom{
+  margin-top:auto
+}
+
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-width:0
+}
+
 .topbar{
   height:62px;
   border-bottom:1px solid #252936;
   display:flex;
   align-items:center;
   padding:0 22px;
-  font-weight:bold
+  font-weight:bold;
+  flex-shrink:0
 }
-.topbar span{color:#888;margin-left:8px;font-weight:normal}
+
+.topbar span{
+  color:#888;
+  margin-left:8px;
+  font-weight:normal
+}
 
 .content{
   flex:1;
   overflow:auto;
   padding:30px
 }
+
 .hero{
   max-width:900px;
   margin:35px auto;
   text-align:center
 }
+
 .hero h1{
   font-size:48px;
   margin-bottom:12px
 }
-.hero p{color:#9da2ae;font-size:18px}
+
+.hero p{
+  color:#9da2ae;
+  font-size:18px
+}
 
 .grid{
   max-width:950px;
@@ -89,6 +131,7 @@ body{
   grid-template-columns:repeat(3,1fr);
   gap:16px
 }
+
 .card{
   background:#151821;
   border:1px solid #292d38;
@@ -97,12 +140,21 @@ body{
   cursor:pointer;
   transition:.2s
 }
+
 .card:hover{
   transform:translateY(-2px);
   border-color:#555
 }
-.card h3{margin-bottom:8px}
-.card p{color:#9297a4;font-size:14px;line-height:1.5}
+
+.card h3{
+  margin-bottom:8px
+}
+
+.card p{
+  color:#9297a4;
+  font-size:14px;
+  line-height:1.5
+}
 
 .chat{
   max-width:900px;
@@ -111,11 +163,13 @@ body{
   display:flex;
   flex-direction:column
 }
+
 .messages{
   flex:1;
   overflow:auto;
   padding:20px 0
 }
+
 .msg{
   padding:14px 18px;
   margin:10px 0;
@@ -124,8 +178,16 @@ body{
   line-height:1.5;
   white-space:pre-wrap
 }
-.user{background:#242936;margin-left:auto}
-.ai{background:#151821;border:1px solid #292d38}
+
+.user{
+  background:#242936;
+  margin-left:auto
+}
+
+.ai{
+  background:#151821;
+  border:1px solid #292d38
+}
 
 .inputbox{
   border:1px solid #303541;
@@ -136,6 +198,7 @@ body{
   gap:8px;
   margin-bottom:20px
 }
+
 .inputbox textarea{
   flex:1;
   background:none;
@@ -147,6 +210,7 @@ body{
   font-size:15px;
   min-height:45px
 }
+
 .inputbox button{
   width:45px;
   border:0;
@@ -157,20 +221,260 @@ body{
   font-size:18px
 }
 
-.page{max-width:1000px;margin:auto}
-.page h2{font-size:30px;margin-bottom:10px}
-.page>p{color:#999;margin-bottom:25px}
+.page{
+  max-width:1100px;
+  margin:auto
+}
 
-@media(max-width:700px){
-  .sidebar{width:70px;padding:10px 7px}
-  .logo{font-size:18px;padding:10px 5px 20px}
-  .newchat{font-size:0}
-  .newchat:after{content:"+";font-size:22px}
-  .nav button{font-size:0;text-align:center}
-  .nav button:before{content:"•";font-size:20px}
-  .grid{grid-template-columns:1fr}
-  .hero h1{font-size:36px}
-  .content{padding:18px}
+.page h2{
+  font-size:30px;
+  margin-bottom:10px
+}
+
+.page>p{
+  color:#999;
+  margin-bottom:25px
+}
+
+/* BUILDER */
+
+.builder{
+  max-width:1200px;
+  margin:auto
+}
+
+.builder-header{
+  margin-bottom:20px
+}
+
+.builder-header h2{
+  font-size:32px;
+  margin-bottom:7px
+}
+
+.builder-header p{
+  color:#9297a4
+}
+
+.builder-box{
+  background:#151821;
+  border:1px solid #292d38;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:18px
+}
+
+.builder-box textarea{
+  width:100%;
+  min-height:110px;
+  resize:vertical;
+  background:#0e1117;
+  color:#fff;
+  border:1px solid #303541;
+  border-radius:12px;
+  padding:15px;
+  outline:none;
+  font-size:15px;
+  line-height:1.5
+}
+
+.builder-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap
+}
+
+.primary-btn,
+.secondary-btn{
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  cursor:pointer;
+  font-weight:bold
+}
+
+.primary-btn{
+  background:#fff;
+  color:#111
+}
+
+.secondary-btn{
+  background:#242936;
+  color:#fff;
+  border:1px solid #363b48
+}
+
+.builder-layout{
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  gap:16px
+}
+
+.code-panel,
+.preview-panel{
+  background:#11141b;
+  border:1px solid #292d38;
+  border-radius:16px;
+  overflow:hidden
+}
+
+.panel-header{
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  border-bottom:1px solid #292d38;
+  background:#151821
+}
+
+.panel-title{
+  font-weight:bold;
+  font-size:14px
+}
+
+.code-area{
+  height:500px;
+  width:100%;
+  background:#0b0d12;
+  color:#d7dbe5;
+  border:0;
+  outline:0;
+  resize:none;
+  padding:15px;
+  font-family:monospace;
+  font-size:12px;
+  line-height:1.5
+}
+
+.preview-wrap{
+  background:#d9d9d9;
+  padding:12px;
+  height:552px;
+  overflow:auto
+}
+
+#websitePreview{
+  width:100%;
+  height:100%;
+  border:0;
+  background:white;
+  border-radius:8px
+}
+
+.example-prompts{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
+
+.example{
+  background:#1c202a;
+  border:1px solid #303541;
+  color:#bbb;
+  padding:8px 11px;
+  border-radius:20px;
+  font-size:12px;
+  cursor:pointer
+}
+
+.example:hover{
+  color:white;
+  border-color:#666
+}
+
+.status{
+  color:#888;
+  font-size:12px
+}
+
+.mobile-preview{
+  max-width:390px !important;
+  margin:auto;
+  display:block
+}
+
+/* HISTORY */
+
+.history-card{
+  margin-bottom:12px;
+  cursor:default
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .sidebar{
+    width:75px;
+    padding:10px 7px
+  }
+
+  .logo{
+    font-size:18px;
+    padding:10px 5px 20px;
+    text-align:center
+  }
+
+  .newchat{
+    font-size:0
+  }
+
+  .newchat:after{
+    content:"+";
+    font-size:22px
+  }
+
+  .nav button{
+    font-size:0;
+    text-align:center
+  }
+
+  .nav button:before{
+    content:"•";
+    font-size:20px
+  }
+
+  .builder-layout{
+    grid-template-columns:1fr
+  }
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .hero h1{
+    font-size:36px
+  }
+
+  .content{
+    padding:18px
+  }
+}
+
+@media(max-width:600px){
+
+  .topbar{
+    padding:0 14px
+  }
+
+  .topbar span{
+    display:none
+  }
+
+  .builder-header h2{
+    font-size:26px
+  }
+
+  .preview-wrap{
+    height:450px
+  }
+
+  .code-area{
+    height:350px
+  }
 }
 </style>
 </head>
@@ -180,268 +484,1376 @@ body{
 <div class="app">
 
 <aside class="sidebar">
+
   <div class="logo">NEXO</div>
 
-  <button class="newchat" onclick="show('chat')">＋ New Chat</button>
+  <button class="newchat" onclick="show('chat')">
+    ＋ New Chat
+  </button>
 
   <div class="nav">
-    <button onclick="show('home')">⌂ Home</button>
-    <button onclick="show('chat')">◉ Chat</button>
-    <button onclick="show('history')">◷ History</button>
-    <button onclick="show('projects')">▣ Projects</button>
-    <button onclick="show('builder')">⌘ Website Builder</button>
-    <button onclick="show('files')">▤ Files</button>
-    <button onclick="show('settings')">⚙ Settings</button>
+
+    <button onclick="show('home')">
+      ⌂ Home
+    </button>
+
+    <button onclick="show('chat')">
+      ◉ Chat
+    </button>
+
+    <button onclick="show('history')">
+      ◷ History
+    </button>
+
+    <button onclick="show('projects')">
+      ▣ Projects
+    </button>
+
+    <button onclick="show('builder')">
+      ⌘ Website Builder
+    </button>
+
+    <button onclick="show('files')">
+      ▤ Files
+    </button>
+
+    <button onclick="show('settings')">
+      ⚙ Settings
+    </button>
+
   </div>
 
   <div class="bottom nav">
-    <button onclick="alert('NEXO account system coming soon')">♙ Account</button>
+
+    <button onclick="alert('NEXO account system coming soon')">
+      ♙ Account
+    </button>
+
   </div>
+
 </aside>
 
 <main class="main">
 
   <div class="topbar">
-    NEXO <span>Your AI for everything</span>
+    NEXO
+    <span>Your AI for everything</span>
   </div>
 
   <div class="content" id="content"></div>
 
 </main>
+
 </div>
 
 <script>
 
-const BACKEND="https://ksiei-ai-backend.onrender.com/chat";
+const BACKEND =
+"https://ksiei-ai-backend.onrender.com/chat";
 
-let historyData=JSON.parse(localStorage.getItem("nexo_history")||"[]");
+let historyData =
+JSON.parse(localStorage.getItem("nexo_history") || "[]");
+
+let currentWebsite = "";
+
+
+/* =========================
+   MAIN NAVIGATION
+========================= */
 
 function show(screen){
 
-const c=document.getElementById("content");
+  const c =
+  document.getElementById("content");
 
-if(screen==="home"){
-c.innerHTML=`
-<div class="hero">
-<h1>What can I help you build?</h1>
-<p>Chat, code, create websites, manage projects and more.</p>
-</div>
 
-<div class="grid">
-<div class="card" onclick="show('chat')">
-<h3>💬 AI Chat</h3>
-<p>Ask questions, brainstorm ideas and get AI assistance.</p>
-</div>
+  /* HOME */
 
-<div class="card" onclick="show('builder')">
-<h3>🌐 Website Builder</h3>
-<p>Tell NEXO what website you want and start building it.</p>
-</div>
+  if(screen === "home"){
 
-<div class="card" onclick="show('projects')">
-<h3>🚀 Projects</h3>
-<p>Create and manage your AI projects.</p>
-</div>
+    c.innerHTML = `
 
-<div class="card" onclick="show('files')">
-<h3>📁 Files</h3>
-<p>Work with your project files.</p>
-</div>
+      <div class="hero">
 
-<div class="card" onclick="show('history')">
-<h3>🕘 History</h3>
-<p>View your previous NEXO conversations.</p>
-</div>
+        <h1>
+          What can I help you build?
+        </h1>
 
-<div class="card" onclick="show('settings')">
-<h3>⚙ Settings</h3>
-<p>Manage your NEXO settings.</p>
-</div>
-</div>`;
-return;
+        <p>
+          Chat, code, create websites,
+          manage projects and more.
+        </p>
+
+      </div>
+
+      <div class="grid">
+
+        <div class="card"
+             onclick="show('chat')">
+
+          <h3>💬 AI Chat</h3>
+
+          <p>
+            Ask questions, brainstorm ideas
+            and get AI assistance.
+          </p>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('builder')">
+
+          <h3>🌐 Website Builder</h3>
+
+          <p>
+            Describe your website and
+            generate a live preview.
+          </p>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('projects')">
+
+          <h3>🚀 Projects</h3>
+
+          <p>
+            Create and manage your
+            NEXO projects.
+          </p>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('files')">
+
+          <h3>📁 Files</h3>
+
+          <p>
+            Work with your project files.
+          </p>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('history')">
+
+          <h3>🕘 History</h3>
+
+          <p>
+            View previous NEXO conversations.
+          </p>
+
+        </div>
+
+
+        <div class="card"
+             onclick="show('settings')">
+
+          <h3>⚙ Settings</h3>
+
+          <p>
+            Manage your NEXO settings.
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  /* CHAT */
+
+  if(screen === "chat"){
+
+    c.innerHTML = `
+
+      <div class="chat">
+
+        <div class="messages" id="messages">
+
+          <div class="msg ai">
+
+            Hello! I'm NEXO. 👋
+
+            <br><br>
+
+            Tell me what you want to do.
+
+          </div>
+
+        </div>
+
+
+        <div class="inputbox">
+
+          <textarea
+            id="message"
+            placeholder="Message NEXO..."
+            onkeydown="enterKey(event)">
+          </textarea>
+
+          <button onclick="sendMessage()">
+            ➤
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  /* WEBSITE BUILDER */
+
+  if(screen === "builder"){
+
+    c.innerHTML = `
+
+      <div class="builder">
+
+        <div class="builder-header">
+
+          <h2>
+            🌐 NEXO Website Builder
+          </h2>
+
+          <p>
+            Describe your website and
+            generate a live website preview.
+          </p>
+
+        </div>
+
+
+        <div class="builder-box">
+
+          <textarea
+            id="builderPrompt"
+            placeholder="Example: Create a modern restaurant website with a hero section, menu, about section and contact button..."></textarea>
+
+
+          <div class="example-prompts">
+
+            <button class="example"
+              onclick="useExample('Create a modern restaurant website with menu, about us and contact section')">
+              🍔 Restaurant
+            </button>
+
+            <button class="example"
+              onclick="useExample('Create a modern portfolio website for a video editor')">
+              🎬 Portfolio
+            </button>
+
+            <button class="example"
+              onclick="useExample('Create a modern shopping website with products and cart')">
+              🛒 Shopping
+            </button>
+
+            <button class="example"
+              onclick="useExample('Create a modern business website with services and contact section')">
+              💼 Business
+            </button>
+
+          </div>
+
+
+          <div class="builder-actions">
+
+            <button
+              class="primary-btn"
+              onclick="generateWebsite()">
+
+              ⚡ Generate Website
+
+            </button>
+
+
+            <button
+              class="secondary-btn"
+              onclick="clearBuilder()">
+
+              Clear
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="builder-layout">
+
+
+          <!-- CODE -->
+
+          <div class="code-panel">
+
+            <div class="panel-header">
+
+              <div class="panel-title">
+                💻 Generated HTML
+              </div>
+
+              <button
+                class="secondary-btn"
+                onclick="copyWebsiteCode()">
+
+                Copy Code
+
+              </button>
+
+            </div>
+
+
+            <textarea
+              id="codeArea"
+              class="code-area"
+              spellcheck="false"
+              placeholder="Generated website code will appear here...">
+            </textarea>
+
+          </div>
+
+
+          <!-- PREVIEW -->
+
+          <div class="preview-panel">
+
+            <div class="panel-header">
+
+              <div class="panel-title">
+                👀 Live Preview
+              </div>
+
+              <div>
+
+                <button
+                  class="secondary-btn"
+                  onclick="refreshPreview()">
+
+                  ↻
+
+                </button>
+
+                <button
+                  class="secondary-btn"
+                  onclick="toggleMobilePreview()">
+
+                  📱
+
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="preview-wrap"
+              id="previewWrap">
+
+              <iframe
+                id="websitePreview"
+                title="NEXO Website Preview">
+              </iframe>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+    loadSavedWebsite();
+
+    return;
+  }
+
+
+  /* PROJECTS */
+
+  if(screen === "projects"){
+
+    c.innerHTML = `
+
+      <div class="page">
+
+        <h2>🚀 Projects</h2>
+
+        <p>
+          Your NEXO projects will appear here.
+        </p>
+
+        <div class="grid">
+
+          <div class="card"
+               onclick="show('builder')">
+
+            <h3>＋ New Website Project</h3>
+
+            <p>
+              Start building a new website.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  /* HISTORY */
+
+  if(screen === "history"){
+
+    let html =
+    historyData.length
+
+    ?
+
+    historyData.map(x => `
+
+      <div class="card history-card">
+
+        <h3>
+          ${escapeHTML(x.message)}
+        </h3>
+
+        <p>
+          ${escapeHTML(x.reply)}
+        </p>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    `
+
+      <div class="card">
+
+        <h3>
+          No conversations yet
+        </h3>
+
+        <p>
+          Start chatting with NEXO.
+        </p>
+
+      </div>
+
+    `;
+
+
+    c.innerHTML = `
+
+      <div class="page">
+
+        <h2>
+          🕘 Chat History
+        </h2>
+
+        <p>
+          Your previous NEXO conversations.
+        </p>
+
+        <div class="grid">
+          ${html}
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  /* FILES */
+
+  if(screen === "files"){
+
+    c.innerHTML = `
+
+      <div class="page">
+
+        <h2>📁 Files</h2>
+
+        <p>
+          Project files and uploads.
+        </p>
+
+        <div class="card">
+
+          <h3>
+            Upload File
+          </h3>
+
+          <p>
+            File management system will
+            be connected here.
+          </p>
+
+          <br>
+
+          <input type="file">
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  /* SETTINGS */
+
+  if(screen === "settings"){
+
+    c.innerHTML = `
+
+      <div class="page">
+
+        <h2>⚙ Settings</h2>
+
+        <p>
+          NEXO settings.
+        </p>
+
+        <div class="card">
+
+          <h3>
+            Account
+          </h3>
+
+          <p>
+            Authentication and profile
+            settings will be connected here.
+          </p>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
 }
 
-if(screen==="chat"){
-c.innerHTML=`
-<div class="chat">
-<div class="messages" id="messages">
-<div class="msg ai">Hello! I'm NEXO. 👋<br><br>Tell me what you want to do.</div>
-</div>
 
-<div class="inputbox">
-<textarea id="message" placeholder="Message NEXO..." onkeydown="enterKey(event)"></textarea>
-<button onclick="sendMessage()">➤</button>
-</div>
-</div>`;
-return;
-}
-
-if(screen==="builder"){
-c.innerHTML=`
-<div class="page">
-<h2>🌐 Website Builder</h2>
-<p>Describe the website you want NEXO to build.</p>
-
-<div class="card">
-<h3>Example</h3>
-<p style="margin:12px 0">
-“Make me a modern shopping website with products, cart, login and seller panel.”
-</p>
-<button class="newchat" onclick="startBuilder()">Start Building</button>
-</div>
-</div>`;
-return;
-}
-
-if(screen==="projects"){
-c.innerHTML=`
-<div class="page">
-<h2>🚀 Projects</h2>
-<p>Your NEXO projects will appear here.</p>
-<div class="grid">
-<div class="card">
-<h3>＋ New Project</h3>
-<p>Create a new AI project.</p>
-</div>
-</div>
-</div>`;
-return;
-}
-
-if(screen==="history"){
-let html=historyData.length
-? historyData.map(x=>`<div class="card"><h3>${escapeHTML(x.message)}</h3><p>${escapeHTML(x.reply)}</p></div>`).join("")
-: `<div class="card"><h3>No conversations yet</h3><p>Start chatting with NEXO.</p></div>`;
-
-c.innerHTML=`
-<div class="page">
-<h2>🕘 Chat History</h2>
-<p>Your previous NEXO conversations.</p>
-<div class="grid">${html}</div>
-</div>`;
-return;
-}
-
-if(screen==="files"){
-c.innerHTML=`
-<div class="page">
-<h2>📁 Files</h2>
-<p>Project files and uploads will appear here.</p>
-<div class="card">
-<h3>Upload File</h3>
-<p>File management system will be connected here.</p>
-<br>
-<input type="file">
-</div>
-</div>`;
-return;
-}
-
-if(screen==="settings"){
-c.innerHTML=`
-<div class="page">
-<h2>⚙ Settings</h2>
-<p>NEXO settings.</p>
-<div class="card">
-<h3>Account</h3>
-<p>Authentication and profile settings will be connected here.</p>
-</div>
-</div>`;
-return;
-}
-}
+/* =========================
+   CHAT
+========================= */
 
 function enterKey(e){
-if(e.key==="Enter"&&!e.shiftKey){
-e.preventDefault();
-sendMessage();
+
+  if(
+    e.key === "Enter" &&
+    !e.shiftKey
+  ){
+
+    e.preventDefault();
+
+    sendMessage();
+
+  }
+
 }
-}
+
 
 async function sendMessage(){
 
-  const input = document.getElementById("message");
-  const messages = document.getElementById("messages");
+  const input =
+  document.getElementById("message");
 
-  if (!input || !input.value.trim()) return;
+  const messages =
+  document.getElementById("messages");
 
-  const message = input.value.trim();
+  if(
+    !input ||
+    !input.value.trim()
+  ) return;
+
+
+  const message =
+  input.value.trim();
+
 
   messages.innerHTML += `
-    <div class="msg user">${escapeHTML(message)}</div>
+
+    <div class="msg user">
+      ${escapeHTML(message)}
+    </div>
+
   `;
+
 
   input.value = "";
 
-  const loading = document.createElement("div");
+
+  const loading =
+  document.createElement("div");
+
   loading.className = "msg ai";
-  loading.textContent = "NEXO is thinking...";
+
+  loading.textContent =
+  "NEXO is thinking...";
+
   messages.appendChild(loading);
 
-  messages.scrollTop = messages.scrollHeight;
 
-  try {
+  try{
 
-    const response = await fetch(BACKEND, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+    const response =
+    await fetch(BACKEND,{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":
+        "application/json"
       },
-      body: JSON.stringify({
-        message: message
+
+      body:JSON.stringify({
+        message:message
       })
+
     });
 
-    const data = await response.json();
 
-    if (!response.ok) {
+    const data =
+    await response.json();
+
+
+    if(!response.ok){
+
       loading.textContent =
-        "Backend Error: " + (data.error || "Unknown error");
+      "AI temporarily unavailable. " +
+      "Website Builder can still be used.";
+
       return;
+
     }
 
+
     loading.textContent =
-      data.reply || "NEXO received an empty response.";
+    data.reply ||
+    "NEXO received an empty response.";
+
 
     historyData.push({
-      message: message,
-      reply: data.reply || ""
+
+      message:message,
+
+      reply:data.reply || ""
+
     });
+
 
     localStorage.setItem(
       "nexo_history",
       JSON.stringify(historyData)
     );
 
-  } catch (error) {
+
+  }catch(error){
 
     loading.textContent =
-      "Connection Error: " + error.message;
+    "AI connection unavailable.";
 
   }
 
-  messages.scrollTop = messages.scrollHeight;
-}
-function startBuilder(){
 
-show("chat");
-
-setTimeout(()=>{
-const input=document.getElementById("message");
-input.value="I want to build a complete modern website. Help me create it step by step.";
-input.focus();
-},100);
+  messages.scrollTop =
+  messages.scrollHeight;
 
 }
+
+
+/* =========================
+   WEBSITE BUILDER
+========================= */
+
+function useExample(text){
+
+  const input =
+  document.getElementById(
+    "builderPrompt"
+  );
+
+  if(input){
+
+    input.value = text;
+
+    input.focus();
+
+  }
+
+}
+
+
+function generateWebsite(){
+
+  const input =
+  document.getElementById(
+    "builderPrompt"
+  );
+
+  const codeArea =
+  document.getElementById(
+    "codeArea"
+  );
+
+  if(
+    !input ||
+    !input.value.trim()
+  ){
+
+    alert(
+      "First describe the website you want."
+    );
+
+    return;
+
+  }
+
+
+  const prompt =
+  input.value.toLowerCase();
+
+
+  let type = "business";
+
+
+  if(
+    prompt.includes("restaurant") ||
+    prompt.includes("food") ||
+    prompt.includes("cafe")
+  ){
+
+    type = "restaurant";
+
+  }
+
+  else if(
+    prompt.includes("portfolio") ||
+    prompt.includes("video editor") ||
+    prompt.includes("designer")
+  ){
+
+    type = "portfolio";
+
+  }
+
+  else if(
+    prompt.includes("shopping") ||
+    prompt.includes("shop") ||
+    prompt.includes("ecommerce") ||
+    prompt.includes("e-commerce")
+  ){
+
+    type = "shopping";
+
+  }
+
+
+  const website =
+  createWebsite(type);
+
+
+  currentWebsite =
+  website;
+
+
+  codeArea.value =
+  website;
+
+
+  refreshPreview();
+
+
+  localStorage.setItem(
+    "nexo_website",
+    website
+  );
+
+}
+
+
+function createWebsite(type){
+
+  let title =
+  "NEXO Business";
+
+  let subtitle =
+  "Build something amazing with NEXO.";
+
+  let heroButton =
+  "Get Started";
+
+
+  if(type === "restaurant"){
+
+    title =
+    "Urban Kitchen";
+
+    subtitle =
+    "Fresh food. Great taste. Made for you.";
+
+    heroButton =
+    "View Menu";
+
+  }
+
+
+  if(type === "portfolio"){
+
+    title =
+    "Creative Studio";
+
+    subtitle =
+    "Video editing, design and digital creativity.";
+
+    heroButton =
+    "View My Work";
+
+  }
+
+
+  if(type === "shopping"){
+
+    title =
+    "NEXO Store";
+
+    subtitle =
+    "Discover products you will love.";
+
+    heroButton =
+    "Shop Now";
+
+  }
+
+
+  return `<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>${title}</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
+
+body{
+font-family:Arial,sans-serif;
+color:#171717;
+background:#f5f5f5
+}
+
+nav{
+height:65px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 7%;
+background:white;
+border-bottom:1px solid #eee
+}
+
+.logo{
+font-size:23px;
+font-weight:800
+}
+
+nav a{
+margin-left:20px;
+text-decoration:none;
+color:#444
+}
+
+.hero{
+min-height:430px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:40px 20px;
+background:linear-gradient(
+135deg,
+#111827,
+#312e81
+);
+color:white
+}
+
+.hero-content{
+max-width:700px
+}
+
+.hero h1{
+font-size:55px;
+margin-bottom:18px
+}
+
+.hero p{
+font-size:19px;
+line-height:1.6;
+opacity:.85;
+margin-bottom:28px
+}
+
+.btn{
+display:inline-block;
+padding:13px 23px;
+background:white;
+color:#111;
+border-radius:8px;
+text-decoration:none;
+font-weight:bold
+}
+
+.section{
+padding:65px 7%;
+background:white
+}
+
+.section h2{
+text-align:center;
+font-size:32px;
+margin-bottom:35px
+}
+
+.cards{
+display:grid;
+grid-template-columns:
+repeat(3,1fr);
+gap:20px;
+max-width:1100px;
+margin:auto
+}
+
+.card{
+padding:25px;
+border:1px solid #eee;
+border-radius:15px;
+background:#fff;
+box-shadow:
+0 8px 25px rgba(0,0,0,.05)
+}
+
+.card h3{
+margin-bottom:10px
+}
+
+.card p{
+color:#666;
+line-height:1.6
+}
+
+.contact{
+text-align:center;
+background:#f4f4f5
+}
+
+footer{
+padding:25px;
+text-align:center;
+background:#111827;
+color:#aaa
+}
+
+@media(max-width:700px){
+
+.hero h1{
+font-size:38px
+}
+
+.cards{
+grid-template-columns:1fr
+}
+
+nav{
+padding:0 20px
+}
+
+nav div:last-child{
+display:none
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+${title}
+</div>
+
+<div>
+<a href="#home">Home</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</div>
+
+</nav>
+
+
+<section
+class="hero"
+id="home">
+
+<div class="hero-content">
+
+<h1>
+${title}
+</h1>
+
+<p>
+${subtitle}
+</p>
+
+<a
+href="#about"
+class="btn">
+${heroButton}
+</a>
+
+</div>
+
+</section>
+
+
+<section
+class="section"
+id="about">
+
+<h2>
+What We Offer
+</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>
+✨ Quality
+</h3>
+
+<p>
+Modern design and a smooth
+experience for every visitor.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🚀 Fast
+</h3>
+
+<p>
+Built with a responsive,
+mobile-friendly experience.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+💡 Creative
+</h3>
+
+<p>
+A clean and professional
+digital experience.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section
+class="section contact"
+id="contact">
+
+<h2>
+Let's Work Together
+</h2>
+
+<p>
+Ready to start something amazing?
+</p>
+
+<br>
+
+<a
+href="mailto:hello@example.com"
+class="btn">
+Contact Us
+</a>
+
+</section>
+
+
+<footer>
+
+Built with NEXO ✨
+
+</footer>
+
+
+</body>
+
+</html>`;
+
+}
+
+
+/* =========================
+   PREVIEW
+========================= */
+
+function refreshPreview(){
+
+  const codeArea =
+  document.getElementById(
+    "codeArea"
+  );
+
+  const preview =
+  document.getElementById(
+    "websitePreview"
+  );
+
+  if(
+    !codeArea ||
+    !preview
+  ) return;
+
+
+  currentWebsite =
+  codeArea.value;
+
+
+  preview.srcdoc =
+  currentWebsite;
+
+}
+
+
+function toggleMobilePreview(){
+
+  const preview =
+  document.getElementById(
+    "websitePreview"
+  );
+
+  if(!preview) return;
+
+
+  preview.classList.toggle(
+    "mobile-preview"
+  );
+
+}
+
+
+function copyWebsiteCode(){
+
+  const codeArea =
+  document.getElementById(
+    "codeArea"
+  );
+
+  if(
+    !codeArea ||
+    !codeArea.value
+  ){
+
+    alert(
+      "Generate a website first."
+    );
+
+    return;
+
+  }
+
+
+  navigator.clipboard
+  .writeText(codeArea.value)
+  .then(()=>{
+
+    alert(
+      "Website code copied! 📋"
+    );
+
+  })
+
+  .catch(()=>{
+
+    codeArea.select();
+
+    document.execCommand("copy");
+
+    alert(
+      "Website code copied! 📋"
+    );
+
+  });
+
+}
+
+
+function clearBuilder(){
+
+  const input =
+  document.getElementById(
+    "builderPrompt"
+  );
+
+  const code =
+  document.getElementById(
+    "codeArea"
+  );
+
+  const preview =
+  document.getElementById(
+    "websitePreview"
+  );
+
+
+  if(input)
+    input.value = "";
+
+  if(code)
+    code.value = "";
+
+  if(preview)
+    preview.srcdoc = "";
+
+  localStorage.removeItem(
+    "nexo_website"
+  );
+
+}
+
+
+function loadSavedWebsite(){
+
+  const saved =
+  localStorage.getItem(
+    "nexo_website"
+  );
+
+  const code =
+  document.getElementById(
+    "codeArea"
+  );
+
+
+  if(
+    saved &&
+    code
+  ){
+
+    code.value =
+    saved;
+
+    currentWebsite =
+    saved;
+
+    refreshPreview();
+
+  }
+
+}
+
+
+/* =========================
+   SECURITY
+========================= */
 
 function escapeHTML(text){
-return String(text)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+
+  return String(text)
+
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
+
 }
+
+
+/* START */
 
 show("home");
 
