@@ -386,7 +386,7 @@ body:JSON.stringify({message})
 
 const data=await response.json();
 
-loading.textContent=data.reply||"Sorry, I couldn't generate a response.";
+loading.textContent=data.reply || ("Backend Error: " + (data.error || "Unknown error"));
 
 historyData.push({
 message:message,
