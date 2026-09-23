@@ -223,8 +223,6 @@ color:#999;
 margin-bottom:25px
 }
 
-/* BUILDER */
-
 .builder{
 max-width:1200px;
 margin:auto
@@ -243,7 +241,8 @@ margin-bottom:7px
 color:#9297a4
 }
 
-.builder-box{
+.builder-box,
+.edit-box{
 background:#151821;
 border:1px solid #292d38;
 border-radius:16px;
@@ -251,7 +250,8 @@ padding:16px;
 margin-bottom:18px
 }
 
-.builder-box textarea{
+.builder-box textarea,
+.edit-box textarea{
 width:100%;
 min-height:110px;
 resize:vertical;
@@ -376,14 +376,6 @@ font-size:12px;
 margin-top:8px
 }
 
-.edit-box{
-margin-top:18px;
-background:#151821;
-border:1px solid #292d38;
-border-radius:16px;
-padding:16px
-}
-
 .edit-box h3{
 margin-bottom:8px
 }
@@ -392,19 +384,6 @@ margin-bottom:8px
 color:#9297a4;
 font-size:13px;
 margin-bottom:12px
-}
-
-.edit-box textarea{
-width:100%;
-min-height:85px;
-resize:vertical;
-background:#0e1117;
-color:#fff;
-border:1px solid #303541;
-border-radius:12px;
-padding:15px;
-outline:none;
-font-size:15px
 }
 
 .mobile-preview{
@@ -645,43 +624,40 @@ c.innerHTML=`
 <h2>🌐 NEXO Website Builder</h2>
 
 <p>
-Describe your website and generate a live website preview.
+Describe any website you want. NEXO will create a custom website preview.
 </p>
 
 </div>
-
 
 <div class="builder-box">
 
 <textarea
 id="builderPrompt"
-placeholder="Example: Create a modern restaurant website with a hero section, menu section and contact button..."></textarea>
-
+placeholder="Example: Create a modern restaurant called Royal Taste with menu, reviews, contact section and red Order Now button..."></textarea>
 
 <div class="example-prompts">
 
 <button class="example"
-onclick="useExample('Create a modern restaurant website with menu, about us and contact section')">
+onclick="useExample('Create a modern restaurant called Royal Taste with menu, reviews and contact section')">
 🍔 Restaurant
 </button>
 
 <button class="example"
-onclick="useExample('Create a modern portfolio website for a video editor')">
+onclick="useExample('Create a professional portfolio website called Creative Vision for a video editor with projects and contact section')">
 🎬 Portfolio
 </button>
 
 <button class="example"
-onclick="useExample('Create a modern shopping website with products and cart')">
+onclick="useExample('Create a modern online shopping store called TrendCart with products, prices and Shop Now buttons')">
 🛒 Shopping
 </button>
 
 <button class="example"
-onclick="useExample('Create a modern business website with services and contact section')">
+onclick="useExample('Create a professional business website called Nova Business with services, about us and contact section')">
 💼 Business
 </button>
 
 </div>
-
 
 <div class="builder-actions">
 
@@ -697,7 +673,6 @@ Clear
 
 </div>
 
-
 <div class="builder-layout">
 
 <div class="code-panel">
@@ -708,9 +683,7 @@ Clear
 💻 Generated HTML
 </div>
 
-<button
-class="secondary-btn"
-onclick="copyWebsiteCode()">
+<button class="secondary-btn" onclick="copyWebsiteCode()">
 Copy Code
 </button>
 
@@ -724,7 +697,6 @@ placeholder="Generated website code will appear here..."></textarea>
 
 </div>
 
-
 <div class="preview-panel">
 
 <div class="panel-header">
@@ -735,13 +707,9 @@ placeholder="Generated website code will appear here..."></textarea>
 
 <div>
 
-<button
-class="secondary-btn"
-onclick="refreshPreview()">↻</button>
+<button class="secondary-btn" onclick="refreshPreview()">↻</button>
 
-<button
-class="secondary-btn"
-onclick="toggleMobilePreview()">📱</button>
+<button class="secondary-btn" onclick="toggleMobilePreview()">📱</button>
 
 </div>
 
@@ -760,29 +728,25 @@ title="NEXO Website Preview">
 
 </div>
 
-
 <div class="edit-box">
 
 <h3>✨ Edit Website with Prompt</h3>
 
 <p>
-Tell NEXO what you want to change in the current website.
+Generate a website first, then tell NEXO what you want to change.
 </p>
 
 <textarea
 id="editPrompt"
-placeholder="Example: Make the background black, add a menu section and change the Contact button to red..."></textarea>
+placeholder="Example: Change the website name to Royal Palace, make the background dark, add a menu and make the Order button red..."></textarea>
 
 <div class="builder-actions">
 
-<button
-class="primary-btn"
-onclick="editWebsite()">
+<button class="primary-btn" onclick="editWebsite()">
 ✨ Apply Changes
 </button>
 
-<button
-class="secondary-btn"
+<button class="secondary-btn"
 onclick="document.getElementById('editPrompt').value=''">
 Clear
 </button>
@@ -861,7 +825,6 @@ historyData.map(x=>`
 
 `;
 
-
 c.innerHTML=`
 
 <div class="page">
@@ -892,9 +855,7 @@ c.innerHTML=`
 
 <h3>Upload File</h3>
 
-<p>
-File management system will be connected here.
-</p>
+<p>File management system will be connected here.</p>
 
 <br>
 
@@ -922,9 +883,7 @@ c.innerHTML=`
 
 <h3>Account</h3>
 
-<p>
-Authentication and profile settings will be connected here.
-</p>
+<p>Authentication and profile settings will be connected here.</p>
 
 </div>
 
@@ -974,7 +933,6 @@ loading.textContent="NEXO is thinking...";
 
 messages.appendChild(loading);
 
-
 try{
 
 const response=await fetch(BACKEND,{
@@ -996,7 +954,7 @@ const data=await response.json();
 if(!response.ok){
 
 loading.textContent=
-"AI temporarily unavailable. Website Builder can still be used.";
+"AI temporarily unavailable. Website Builder is available.";
 
 return;
 
@@ -1026,7 +984,7 @@ messages.scrollTop=messages.scrollHeight;
 }
 
 
-/* WEBSITE BUILDER */
+/* EXAMPLE */
 
 function useExample(text){
 
@@ -1042,14 +1000,18 @@ input.focus();
 }
 
 
+/* GENERATE WEBSITE */
+
 function generateWebsite(){
 
 const input=document.getElementById("builderPrompt");
 const codeArea=document.getElementById("codeArea");
 
 if(!input||!input.value.trim()){
+
 alert("First describe the website you want.");
 return;
+
 }
 
 const originalPrompt=input.value.trim();
@@ -1057,7 +1019,7 @@ const prompt=originalPrompt.toLowerCase();
 
 let type="business";
 
-/* WEBSITE TYPE */
+/* TYPE DETECTION */
 
 if(
 prompt.includes("restaurant")||
@@ -1066,7 +1028,9 @@ prompt.includes("cafe")||
 prompt.includes("hotel")||
 prompt.includes("dining")
 ){
+
 type="restaurant";
+
 }
 
 else if(
@@ -1075,31 +1039,39 @@ prompt.includes("video editor")||
 prompt.includes("designer")||
 prompt.includes("photographer")
 ){
+
 type="portfolio";
+
 }
 
 else if(
 prompt.includes("shopping")||
 prompt.includes("shop")||
+prompt.includes("store")||
 prompt.includes("ecommerce")||
-prompt.includes("e-commerce")||
-prompt.includes("store")
+prompt.includes("e-commerce")
 ){
+
 type="shopping";
+
 }
 
-/* WEBSITE NAME */
 
-let websiteName="NEXO Business";
+/* NAME DETECTION */
 
-const namePatterns=[
+let websiteName="";
+
+const patterns=[
+
 /called\s+["']([^"']+)["']/i,
+
 /named\s+["']([^"']+)["']/i,
-/name\s+(?:is|to|as)\s+["']([^"']+)["']/i,
-/(?:called|named)\s+([A-Za-z0-9][A-Za-z0-9 &'-]{2,40})/i
+
+/name\s+(?:is|to|as)\s+["']([^"']+)["']/i
+
 ];
 
-for(const pattern of namePatterns){
+for(const pattern of patterns){
 
 const match=originalPrompt.match(pattern);
 
@@ -1113,23 +1085,29 @@ break;
 
 }
 
-/* DEFAULT NAMES */
+/* FALLBACK NAME */
 
-if(type==="restaurant" && websiteName==="NEXO Business"){
-websiteName="Royal Taste Restaurant";
+if(!websiteName){
+
+if(type==="restaurant")
+websiteName="Royal Taste";
+
+else if(type==="portfolio")
+websiteName="Creative Vision";
+
+else if(type==="shopping")
+websiteName="TrendCart";
+
+else
+websiteName="Nova Business";
+
 }
 
-if(type==="portfolio" && websiteName==="NEXO Business"){
-websiteName="Creative Studio";
-}
-
-if(type==="shopping" && websiteName==="NEXO Business"){
-websiteName="NEXO Store";
-}
-
-/* GENERATE */
-
-const website=createWebsite(type,websiteName);
+const website=createWebsite(
+type,
+websiteName,
+originalPrompt
+);
 
 currentWebsite=website;
 
@@ -1137,48 +1115,197 @@ codeArea.value=website;
 
 refreshPreview();
 
-localStorage.setItem("nexo_website",website);
+localStorage.setItem(
+"nexo_website",
+website
+);
 
 }
 
 
-function createWebsite(type,websiteName){
+/* CREATE WEBSITE */
 
-let title="NEXO Business";
-let subtitle="Build something amazing with NEXO.";
-let heroButton="Get Started";
+function createWebsite(type,websiteName,prompt){
+
+let subtitle="";
+let button="Get Started";
+let sectionTitle="";
+let cards="";
+let accent="#111827";
 
 if(type==="restaurant"){
 
-title=websiteName;
-subtitle="Fresh food. Great taste. Made for you.";
-heroButton="View Menu";
+subtitle="Fresh food, unforgettable taste and a dining experience made for you.";
+button="Order Now";
+sectionTitle="Our Menu";
+accent="#991b1b";
+
+cards=`
+
+<div class="card">
+<h3>🍔 Signature Burger</h3>
+<p>Fresh ingredients, premium cheese and our special house sauce.</p>
+<strong>₹199</strong>
+</div>
+
+<div class="card">
+<h3>🍕 Special Pizza</h3>
+<p>Hot, cheesy and freshly prepared with premium toppings.</p>
+<strong>₹299</strong>
+</div>
+
+<div class="card">
+<h3>🍛 Royal Biryani</h3>
+<p>Aromatic rice with rich spices and authentic flavour.</p>
+<strong>₹249</strong>
+</div>
+
+<div class="card">
+<h3>🍝 Creamy Pasta</h3>
+<p>Delicious pasta prepared with our signature creamy sauce.</p>
+<strong>₹229</strong>
+</div>
+
+<div class="card">
+<h3>🥗 Fresh Salad</h3>
+<p>Fresh vegetables with a light and healthy dressing.</p>
+<strong>₹149</strong>
+</div>
+
+<div class="card">
+<h3>🍰 Special Dessert</h3>
+<p>A sweet finish to make your dining experience complete.</p>
+<strong>₹129</strong>
+</div>
+
+`;
 
 }
 
-if(type==="portfolio"){
+else if(type==="portfolio"){
 
-title="Creative Studio";
-subtitle="Video editing, design and digital creativity.";
-heroButton="View My Work";
+subtitle="Creative work, professional editing and digital experiences.";
+button="View My Work";
+sectionTitle="Featured Projects";
+accent="#312e81";
+
+cards=`
+
+<div class="card">
+<h3>🎬 Video Editing</h3>
+<p>Professional short-form and long-form video editing.</p>
+</div>
+
+<div class="card">
+<h3>🎨 Graphic Design</h3>
+<p>Modern thumbnails, social media designs and branding.</p>
+</div>
+
+<div class="card">
+<h3>📱 Social Media</h3>
+<p>Creative content designed to attract and engage audiences.</p>
+</div>
+
+`;
 
 }
 
-if(type==="shopping"){
+else if(type==="shopping"){
 
-title="NEXO Store";
-subtitle="Discover products you will love.";
-heroButton="Shop Now";
+subtitle="Discover trending products, great value and a smooth shopping experience.";
+button="Shop Now";
+sectionTitle="Featured Products";
+accent="#075985";
+
+cards=`
+
+<div class="card">
+<h3>🎧 Wireless Headphones</h3>
+<p>Premium sound and comfortable all-day design.</p>
+<strong>₹1,499</strong>
+</div>
+
+<div class="card">
+<h3>⌚ Smart Watch</h3>
+<p>Modern design with smart everyday features.</p>
+<strong>₹2,999</strong>
+</div>
+
+<div class="card">
+<h3>👟 Sneakers</h3>
+<p>Comfortable and stylish sneakers for everyday use.</p>
+<strong>₹1,999</strong>
+</div>
+
+<div class="card">
+<h3>📱 Mobile Accessories</h3>
+<p>Useful accessories for your everyday devices.</p>
+<strong>₹499</strong>
+</div>
+
+`;
 
 }
+
+else{
+
+subtitle="Professional solutions, modern design and reliable service for your business.";
+button="Contact Us";
+sectionTitle="Our Services";
+accent="#1e3a8a";
+
+cards=`
+
+<div class="card">
+<h3>🚀 Business Solutions</h3>
+<p>Practical digital solutions designed around your business.</p>
+</div>
+
+<div class="card">
+<h3>⭐ Premium Service</h3>
+<p>Professional quality and attention to detail.</p>
+</div>
+
+<div class="card">
+<h3>💡 Creative Strategy</h3>
+<p>Modern ideas to help your brand stand out.</p>
+</div>
+
+`;
+
+}
+
+
+/* COLOR FROM PROMPT */
+
+if(prompt.includes("red"))
+accent="#991b1b";
+
+if(prompt.includes("blue"))
+accent="#1d4ed8";
+
+if(prompt.includes("green"))
+accent="#166534";
+
+if(prompt.includes("purple"))
+accent="#6d28d9";
+
+if(prompt.includes("orange"))
+accent="#c2410c";
 
 
 return `<!DOCTYPE html>
+
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title}</title>
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>${escapeHTML(websiteName)}</title>
 
 <style>
 
@@ -1190,18 +1317,21 @@ padding:0
 
 body{
 font-family:Arial,sans-serif;
-color:#171717;
-background:#f5f5f5
+background:#f5f5f5;
+color:#171717
 }
 
 nav{
-height:65px;
+height:70px;
 display:flex;
 align-items:center;
 justify-content:space-between;
 padding:0 7%;
 background:white;
-border-bottom:1px solid #eee
+border-bottom:1px solid #eee;
+position:sticky;
+top:0;
+z-index:10
 }
 
 .logo{
@@ -1210,91 +1340,109 @@ font-weight:800
 }
 
 nav a{
-margin-left:20px;
+margin-left:22px;
 text-decoration:none;
 color:#444
 }
 
 .hero{
-min-height:430px;
+min-height:470px;
 display:flex;
 align-items:center;
 justify-content:center;
 text-align:center;
-padding:40px 20px;
-background:linear-gradient(135deg,#111827,#312e81);
+padding:50px 20px;
+background:linear-gradient(135deg,${accent},#111827);
 color:white
 }
 
 .hero-content{
-max-width:700px
+max-width:800px
 }
 
 .hero h1{
-font-size:55px;
-margin-bottom:18px
+font-size:58px;
+margin-bottom:20px
 }
 
 .hero p{
-font-size:19px;
-line-height:1.6;
-opacity:.85;
-margin-bottom:28px
+font-size:20px;
+line-height:1.7;
+opacity:.9;
+margin-bottom:30px
 }
 
 .btn{
 display:inline-block;
-padding:13px 23px;
+padding:14px 26px;
 background:white;
 color:#111;
-border-radius:8px;
+border-radius:9px;
 text-decoration:none;
 font-weight:bold
 }
 
 .section{
-padding:65px 7%;
+padding:70px 7%;
 background:white
 }
 
 .section h2{
 text-align:center;
-font-size:32px;
-margin-bottom:35px
+font-size:35px;
+margin-bottom:40px
 }
 
 .cards{
 display:grid;
 grid-template-columns:repeat(3,1fr);
-gap:20px;
+gap:22px;
 max-width:1100px;
 margin:auto
 }
 
 .card{
-padding:25px;
-border:1px solid #eee;
-border-radius:15px;
-background:#fff;
-box-shadow:0 8px 25px rgba(0,0,0,.05)
+padding:27px;
+border:1px solid #e5e7eb;
+border-radius:16px;
+background:white;
+box-shadow:0 8px 30px rgba(0,0,0,.06)
 }
 
 .card h3{
-margin-bottom:10px
+margin-bottom:12px
 }
 
 .card p{
 color:#666;
-line-height:1.6
+line-height:1.6;
+margin-bottom:12px
+}
+
+.card strong{
+font-size:18px
+}
+
+.about{
+background:#f8fafc;
+text-align:center
+}
+
+.about p{
+max-width:800px;
+margin:auto;
+color:#666;
+line-height:1.8;
+font-size:17px
 }
 
 .contact{
 text-align:center;
-background:#f4f4f5
+background:#eef2ff
 }
 
 footer{
-padding:25px;
+padding:28px;
 text-align:center;
 background:#111827;
 color:#aaa
@@ -1303,7 +1451,7 @@ color:#aaa
 @media(max-width:700px){
 
 .hero h1{
-font-size:38px
+font-size:40px
 }
 
 .cards{
@@ -1321,18 +1469,27 @@ display:none
 }
 
 </style>
+
 </head>
 
 <body>
 
 <nav>
 
-<div class="logo">${title}</div>
+<div class="logo">
+${escapeHTML(websiteName)}
+</div>
 
 <div>
+
 <a href="#home">Home</a>
+
 <a href="#about">About</a>
+
+<a href="#services">${type==="restaurant"?"Menu":type==="portfolio"?"Work":type==="shopping"?"Products":"Services"}</a>
+
 <a href="#contact">Contact</a>
+
 </div>
 
 </nav>
@@ -1341,51 +1498,37 @@ display:none
 
 <div class="hero-content">
 
-<h1>${title}</h1>
+<h1>${escapeHTML(websiteName)}</h1>
 
 <p>${subtitle}</p>
 
-<a href="#about" class="btn">${heroButton}</a>
+<a href="#services" class="btn">${button}</a>
 
 </div>
 
 </section>
 
-<section class="section" id="about">
+<section class="section about" id="about">
 
-<h2>What We Offer</h2>
+<h2>About Us</h2>
+
+<p>
+
+Welcome to ${escapeHTML(websiteName)}.
+We combine quality, creativity and a modern experience
+to provide something our customers can truly enjoy.
+
+</p>
+
+</section>
+
+<section class="section" id="services">
+
+<h2>${sectionTitle}</h2>
 
 <div class="cards">
 
-<div class="card">
-
-<h3>✨ Quality</h3>
-
-<p>
-Modern design and a smooth experience for every visitor.
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>🚀 Fast</h3>
-
-<p>
-Built with a responsive, mobile-friendly experience.
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>💡 Creative</h3>
-
-<p>
-A clean and professional digital experience.
-</p>
-
-</div>
+${cards}
 
 </div>
 
@@ -1395,7 +1538,7 @@ A clean and professional digital experience.
 
 <h2>Let's Work Together</h2>
 
-<p>Ready to start something amazing?</p>
+<p>Ready to get started?</p>
 
 <br>
 
@@ -1406,10 +1549,13 @@ Contact Us
 </section>
 
 <footer>
-Built with NEXO ✨
+
+${escapeHTML(websiteName)} © 2026
+
 </footer>
 
 </body>
+
 </html>`;
 
 }
@@ -1426,7 +1572,6 @@ const status=document.getElementById("editStatus");
 if(!codeArea||!codeArea.value.trim()){
 
 alert("First generate a website.");
-
 return;
 
 }
@@ -1434,7 +1579,6 @@ return;
 if(!promptBox||!promptBox.value.trim()){
 
 alert("Tell NEXO what you want to change.");
-
 return;
 
 }
@@ -1443,6 +1587,60 @@ let code=codeArea.value;
 const prompt=promptBox.value.toLowerCase();
 
 status.textContent="Applying your changes...";
+
+
+/* WEBSITE NAME */
+
+const namePatterns=[
+
+/website name\s+(?:to|as)\s+["']([^"']+)["']/i,
+
+/site name\s+(?:to|as)\s+["']([^"']+)["']/i,
+
+/change (?:the )?(?:website )?name\s+(?:to|as)\s+["']([^"']+)["']/i,
+
+/rename\s+(?:the )?(?:website )?(?:to|as)\s+["']([^"']+)["']/i
+
+];
+
+let newName="";
+
+for(const pattern of namePatterns){
+
+const match=promptBox.value.match(pattern);
+
+if(match){
+
+newName=match[1].trim();
+break;
+
+}
+
+}
+
+if(newName){
+
+code=code.replace(
+/<title>.*?<\/title>/i,
+"<title>"+escapeHTML(newName)+"</title>"
+);
+
+code=code.replace(
+/<div class="logo">[\s\S]*?<\/div>/i,
+'<div class="logo">'+escapeHTML(newName)+'</div>'
+);
+
+code=code.replace(
+/<h1>[\s\S]*?<\/h1>/i,
+"<h1>"+escapeHTML(newName)+"</h1>"
+);
+
+code=code.replace(
+/Welcome to .*?\./i,
+"Welcome to "+escapeHTML(newName)+"."
+);
+
+}
 
 
 /* BACKGROUND */
@@ -1466,27 +1664,11 @@ code=code.replace(
 }
 
 
-/* WHITE BACKGROUND */
-
-if(
-prompt.includes("white background")||
-prompt.includes("background white")
-){
-
-code=code.replace(
-"background:#f5f5f5",
-"background:#ffffff"
-);
-
-}
-
-
 /* RED BUTTON */
 
 if(
 prompt.includes("red button")||
-prompt.includes("button red")||
-prompt.includes("contact button red")
+prompt.includes("button red")
 ){
 
 code=code.replace(
@@ -1512,68 +1694,104 @@ code=code.replace(
 }
 
 
-/* CHANGE TITLE */
+/* BLACK FOOTER */
 
-const titleMatch=
-prompt.match(
-/(?:website name|site name|title|name)\s+(?:to|as)\s+["']?([^"']+)["']?/
-);
-
-if(titleMatch){
-
-const newTitle=titleMatch[1]
-.trim()
-.replace(/[.]+$/,"");
+if(
+prompt.includes("black footer")||
+prompt.includes("footer black")
+){
 
 code=code.replace(
-/<title>.*?<\/title>/,
-"<title>"+newTitle+"</title>"
-);
-
-code=code.replace(
-/<div class="logo">.*?<\/div>/,
-'<div class="logo">'+newTitle+'</div>'
-);
-
-code=code.replace(
-/<h1>.*?<\/h1>/,
-"<h1>"+newTitle+"</h1>"
+"background:#111827",
+"background:#000000"
 );
 
 }
 
 
-/* ADD MENU SECTION */
+/* ADD REVIEWS */
+
+if(
+prompt.includes("review")||
+prompt.includes("reviews")
+){
+
+if(!code.includes('id="reviews"')){
+
+const reviews=`
+
+<section class="section" id="reviews">
+
+<h2>Customer Reviews</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>⭐⭐⭐⭐⭐</h3>
+<p>"Amazing experience and excellent quality."</p>
+<strong>— Rahul</strong>
+</div>
+
+<div class="card">
+<h3>⭐⭐⭐⭐⭐</h3>
+<p>"Professional, clean and exactly what I needed."</p>
+<strong>— Priya</strong>
+</div>
+
+<div class="card">
+<h3>⭐⭐⭐⭐⭐</h3>
+<p>"Great service and a beautiful experience."</p>
+<strong>— Aman</strong>
+</div>
+
+</div>
+
+</section>
+`;
+
+code=code.replace(
+'<section class="section contact"',
+reviews+'<section class="section contact"'
+);
+
+}
+
+}
+
+
+/* ADD MENU */
 
 if(
 prompt.includes("add menu")||
-prompt.includes("menu section")||
-prompt.includes("add a menu")
+prompt.includes("menu section")
 ){
 
-if(!code.includes('id="menu"')){
+if(!code.includes('id="menu-extra"')){
 
 const menu=`
 
-<section class="section" id="menu">
+<section class="section" id="menu-extra">
 
-<h2>Our Menu</h2>
+<h2>Special Menu</h2>
 
 <div class="cards">
 
 <div class="card">
 <h3>🍔 Classic Burger</h3>
-<p>Fresh ingredients and delicious taste.</p>
+<p>Fresh and delicious.</p>
+<strong>₹199</strong>
 </div>
 
 <div class="card">
 <h3>🍕 Special Pizza</h3>
-<p>Hot, fresh and made with quality ingredients.</p>
+<p>Hot and cheesy.</p>
+<strong>₹299</strong>
 </div>
 
 <div class="card">
-<h3>🥗 Fresh Salad</h3>
-<p>Healthy, fresh and full of flavour.</p>
+<h3>🍝 Pasta</h3>
+<p>Creamy and tasty.</p>
+<strong>₹229</strong>
 </div>
 
 </div>
@@ -1586,112 +1804,12 @@ code=code.replace(
 menu+'<section class="section contact"'
 );
 
-code=code.replace(
-'<a href="#contact">Contact</a>',
-'<a href="#menu">Menu</a><a href="#contact">Contact</a>'
-);
-
 }
 
 }
 
 
-/* ADD SERVICES */
-
-if(
-prompt.includes("add services")||
-prompt.includes("services section")
-){
-
-if(!code.includes('id="services"')){
-
-const services=`
-
-<section class="section" id="services">
-
-<h2>Our Services</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>🚀 Fast Service</h3>
-<p>Quick and reliable service for every customer.</p>
-</div>
-
-<div class="card">
-<h3>⭐ Premium Quality</h3>
-<p>Professional quality and attention to detail.</p>
-</div>
-
-<div class="card">
-<h3>💡 Custom Solutions</h3>
-<p>Solutions designed around your needs.</p>
-</div>
-
-</div>
-
-</section>
-`;
-
-code=code.replace(
-'<section class="section contact"',
-services+'<section class="section contact"'
-);
-
-}
-
-}
-
-
-/* ADD ABOUT */
-
-if(
-prompt.includes("add about")||
-prompt.includes("about section")
-){
-
-if(!code.includes('id="about-extra"')){
-
-const about=`
-
-<section class="section" id="about-extra">
-
-<h2>About Us</h2>
-
-<p style="max-width:800px;margin:auto;text-align:center;line-height:1.7;color:#666">
-We are passionate about creating quality experiences for our customers.
-Our goal is to combine great design, quality and simplicity.
-</p>
-
-</section>
-`;
-
-code=code.replace(
-'<section class="section contact"',
-about+'<section class="section contact"'
-);
-
-}
-
-}
-
-
-/* FOOTER */
-
-if(
-prompt.includes("footer black")||
-prompt.includes("black footer")
-){
-
-code=code.replace(
-"background:#111827",
-"background:#000000"
-);
-
-}
-
-
-/* SAVE + PREVIEW */
+/* SAVE */
 
 codeArea.value=code;
 
@@ -1727,6 +1845,8 @@ preview.srcdoc=currentWebsite;
 }
 
 
+/* MOBILE PREVIEW */
+
 function toggleMobilePreview(){
 
 const preview=document.getElementById("websitePreview");
@@ -1738,6 +1858,8 @@ preview.classList.toggle("mobile-preview");
 }
 
 
+/* COPY */
+
 function copyWebsiteCode(){
 
 const codeArea=document.getElementById("codeArea");
@@ -1745,13 +1867,11 @@ const codeArea=document.getElementById("codeArea");
 if(!codeArea||!codeArea.value){
 
 alert("Generate a website first.");
-
 return;
 
 }
 
-navigator.clipboard
-.writeText(codeArea.value)
+navigator.clipboard.writeText(codeArea.value)
 .then(()=>{
 
 alert("Website code copied! 📋");
@@ -1770,6 +1890,8 @@ alert("Website code copied! 📋");
 }
 
 
+/* CLEAR */
+
 function clearBuilder(){
 
 const input=document.getElementById("builderPrompt");
@@ -1782,10 +1904,14 @@ if(edit)edit.value="";
 if(code)code.value="";
 if(preview)preview.srcdoc="";
 
+currentWebsite="";
+
 localStorage.removeItem("nexo_website");
 
 }
 
+
+/* LOAD */
 
 function loadSavedWebsite(){
 
@@ -1796,13 +1922,17 @@ const code=document.getElementById("codeArea");
 if(saved&&code){
 
 code.value=saved;
+
 currentWebsite=saved;
+
 refreshPreview();
 
 }
 
 }
 
+
+/* ESCAPE */
 
 function escapeHTML(text){
 
