@@ -1048,48 +1048,88 @@ const input=document.getElementById("builderPrompt");
 const codeArea=document.getElementById("codeArea");
 
 if(!input||!input.value.trim()){
-
 alert("First describe the website you want.");
 return;
-
 }
 
-const prompt=input.value.toLowerCase();
+const originalPrompt=input.value.trim();
+const prompt=originalPrompt.toLowerCase();
 
 let type="business";
+
+/* WEBSITE TYPE */
 
 if(
 prompt.includes("restaurant")||
 prompt.includes("food")||
-prompt.includes("cafe")
+prompt.includes("cafe")||
+prompt.includes("hotel")||
+prompt.includes("dining")
 ){
-
 type="restaurant";
-
 }
 
 else if(
 prompt.includes("portfolio")||
 prompt.includes("video editor")||
-prompt.includes("designer")
+prompt.includes("designer")||
+prompt.includes("photographer")
 ){
-
 type="portfolio";
-
 }
 
 else if(
 prompt.includes("shopping")||
 prompt.includes("shop")||
 prompt.includes("ecommerce")||
-prompt.includes("e-commerce")
+prompt.includes("e-commerce")||
+prompt.includes("store")
 ){
-
 type="shopping";
+}
+
+/* WEBSITE NAME */
+
+let websiteName="NEXO Business";
+
+const namePatterns=[
+/called\s+["']([^"']+)["']/i,
+/named\s+["']([^"']+)["']/i,
+/name\s+(?:is|to|as)\s+["']([^"']+)["']/i,
+/(?:called|named)\s+([A-Za-z0-9][A-Za-z0-9 &'-]{2,40})/i
+];
+
+for(const pattern of namePatterns){
+
+const match=originalPrompt.match(pattern);
+
+if(match){
+
+websiteName=match[1].trim();
+
+break;
 
 }
 
-const website=createWebsite(type);
+}
+
+/* DEFAULT NAMES */
+
+if(type==="restaurant" && websiteName==="NEXO Business"){
+websiteName="Royal Taste Restaurant";
+}
+
+if(type==="portfolio" && websiteName==="NEXO Business"){
+websiteName="Creative Studio";
+}
+
+if(type==="shopping" && websiteName==="NEXO Business"){
+websiteName="NEXO Store";
+}
+
+/* GENERATE */
+
+const website=createWebsite(type,websiteName);
 
 currentWebsite=website;
 
@@ -1102,7 +1142,7 @@ localStorage.setItem("nexo_website",website);
 }
 
 
-function createWebsite(type){
+function createWebsite(type,websiteName){
 
 let title="NEXO Business";
 let subtitle="Build something amazing with NEXO.";
