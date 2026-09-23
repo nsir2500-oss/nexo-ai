@@ -6,475 +6,488 @@
 <title>NEXO — Your AI for Everything</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#0b0d12;
-  color:#fff;
-  height:100vh;
-  overflow:hidden
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0d12;
+color:#fff;
+height:100vh;
+overflow:hidden
 }
 
-button{
-  font-family:inherit
-}
+button{font-family:inherit}
 
-.app{
-  display:flex;
-  height:100vh
-}
+.app{display:flex;height:100vh}
 
 .sidebar{
-  width:250px;
-  background:#11141b;
-  border-right:1px solid #252936;
-  padding:18px 12px;
-  display:flex;
-  flex-direction:column;
-  flex-shrink:0
+width:250px;
+background:#11141b;
+border-right:1px solid #252936;
+padding:18px 12px;
+display:flex;
+flex-direction:column;
+flex-shrink:0
 }
 
 .logo{
-  font-size:27px;
-  font-weight:800;
-  padding:10px 14px 25px;
-  letter-spacing:2px
+font-size:27px;
+font-weight:800;
+padding:10px 14px 25px;
+letter-spacing:2px
 }
 
 .newchat{
-  background:#fff;
-  color:#111;
-  border:0;
-  border-radius:10px;
-  padding:13px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-bottom:15px
+background:#fff;
+color:#111;
+border:0;
+border-radius:10px;
+padding:13px;
+font-weight:bold;
+cursor:pointer;
+margin-bottom:15px
 }
 
 .nav button{
-  width:100%;
-  background:none;
-  color:#c9ccd5;
-  border:0;
-  text-align:left;
-  padding:12px 14px;
-  border-radius:9px;
-  margin:2px 0;
-  cursor:pointer;
-  font-size:15px
+width:100%;
+background:none;
+color:#c9ccd5;
+border:0;
+text-align:left;
+padding:12px 14px;
+border-radius:9px;
+margin:2px 0;
+cursor:pointer;
+font-size:15px
 }
 
 .nav button:hover{
-  background:#1d212b;
-  color:#fff
+background:#1d212b;
+color:#fff
 }
 
-.bottom{
-  margin-top:auto
-}
+.bottom{margin-top:auto}
 
 .main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  min-width:0
+flex:1;
+display:flex;
+flex-direction:column;
+min-width:0
 }
 
 .topbar{
-  height:62px;
-  border-bottom:1px solid #252936;
-  display:flex;
-  align-items:center;
-  padding:0 22px;
-  font-weight:bold;
-  flex-shrink:0
+height:62px;
+border-bottom:1px solid #252936;
+display:flex;
+align-items:center;
+padding:0 22px;
+font-weight:bold;
+flex-shrink:0
 }
 
 .topbar span{
-  color:#888;
-  margin-left:8px;
-  font-weight:normal
+color:#888;
+margin-left:8px;
+font-weight:normal
 }
 
 .content{
-  flex:1;
-  overflow:auto;
-  padding:30px
+flex:1;
+overflow:auto;
+padding:30px
 }
 
 .hero{
-  max-width:900px;
-  margin:35px auto;
-  text-align:center
+max-width:900px;
+margin:35px auto;
+text-align:center
 }
 
 .hero h1{
-  font-size:48px;
-  margin-bottom:12px
+font-size:48px;
+margin-bottom:12px
 }
 
 .hero p{
-  color:#9da2ae;
-  font-size:18px
+color:#9da2ae;
+font-size:18px
 }
 
 .grid{
-  max-width:950px;
-  margin:35px auto;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px
+max-width:950px;
+margin:35px auto;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px
 }
 
 .card{
-  background:#151821;
-  border:1px solid #292d38;
-  border-radius:15px;
-  padding:22px;
-  cursor:pointer;
-  transition:.2s
+background:#151821;
+border:1px solid #292d38;
+border-radius:15px;
+padding:22px;
+cursor:pointer;
+transition:.2s
 }
 
 .card:hover{
-  transform:translateY(-2px);
-  border-color:#555
+transform:translateY(-2px);
+border-color:#555
 }
 
-.card h3{
-  margin-bottom:8px
-}
+.card h3{margin-bottom:8px}
 
 .card p{
-  color:#9297a4;
-  font-size:14px;
-  line-height:1.5
+color:#9297a4;
+font-size:14px;
+line-height:1.5
 }
 
 .chat{
-  max-width:900px;
-  margin:auto;
-  height:100%;
-  display:flex;
-  flex-direction:column
+max-width:900px;
+margin:auto;
+height:100%;
+display:flex;
+flex-direction:column
 }
 
 .messages{
-  flex:1;
-  overflow:auto;
-  padding:20px 0
+flex:1;
+overflow:auto;
+padding:20px 0
 }
 
 .msg{
-  padding:14px 18px;
-  margin:10px 0;
-  border-radius:14px;
-  max-width:80%;
-  line-height:1.5;
-  white-space:pre-wrap
+padding:14px 18px;
+margin:10px 0;
+border-radius:14px;
+max-width:80%;
+line-height:1.5;
+white-space:pre-wrap
 }
 
 .user{
-  background:#242936;
-  margin-left:auto
+background:#242936;
+margin-left:auto
 }
 
 .ai{
-  background:#151821;
-  border:1px solid #292d38
+background:#151821;
+border:1px solid #292d38
 }
 
 .inputbox{
-  border:1px solid #303541;
-  background:#151821;
-  border-radius:16px;
-  padding:10px;
-  display:flex;
-  gap:8px;
-  margin-bottom:20px
+border:1px solid #303541;
+background:#151821;
+border-radius:16px;
+padding:10px;
+display:flex;
+gap:8px;
+margin-bottom:20px
 }
 
 .inputbox textarea{
-  flex:1;
-  background:none;
-  color:white;
-  border:0;
-  outline:0;
-  resize:none;
-  padding:10px;
-  font-size:15px;
-  min-height:45px
+flex:1;
+background:none;
+color:white;
+border:0;
+outline:0;
+resize:none;
+padding:10px;
+font-size:15px;
+min-height:45px
 }
 
 .inputbox button{
-  width:45px;
-  border:0;
-  border-radius:10px;
-  background:#fff;
-  color:#111;
-  cursor:pointer;
-  font-size:18px
+width:45px;
+border:0;
+border-radius:10px;
+background:#fff;
+color:#111;
+cursor:pointer;
+font-size:18px
 }
 
 .page{
-  max-width:1100px;
-  margin:auto
+max-width:1100px;
+margin:auto
 }
 
 .page h2{
-  font-size:30px;
-  margin-bottom:10px
+font-size:30px;
+margin-bottom:10px
 }
 
 .page>p{
-  color:#999;
-  margin-bottom:25px
+color:#999;
+margin-bottom:25px
 }
 
 /* BUILDER */
 
 .builder{
-  max-width:1200px;
-  margin:auto
+max-width:1200px;
+margin:auto
 }
 
 .builder-header{
-  margin-bottom:20px
+margin-bottom:20px
 }
 
 .builder-header h2{
-  font-size:32px;
-  margin-bottom:7px
+font-size:32px;
+margin-bottom:7px
 }
 
 .builder-header p{
-  color:#9297a4
+color:#9297a4
 }
 
 .builder-box{
-  background:#151821;
-  border:1px solid #292d38;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:18px
+background:#151821;
+border:1px solid #292d38;
+border-radius:16px;
+padding:16px;
+margin-bottom:18px
 }
 
 .builder-box textarea{
-  width:100%;
-  min-height:110px;
-  resize:vertical;
-  background:#0e1117;
-  color:#fff;
-  border:1px solid #303541;
-  border-radius:12px;
-  padding:15px;
-  outline:none;
-  font-size:15px;
-  line-height:1.5
+width:100%;
+min-height:110px;
+resize:vertical;
+background:#0e1117;
+color:#fff;
+border:1px solid #303541;
+border-radius:12px;
+padding:15px;
+outline:none;
+font-size:15px;
+line-height:1.5
 }
 
 .builder-actions{
-  display:flex;
-  gap:10px;
-  margin-top:12px;
-  flex-wrap:wrap
+display:flex;
+gap:10px;
+margin-top:12px;
+flex-wrap:wrap
 }
 
-.primary-btn,
-.secondary-btn{
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  cursor:pointer;
-  font-weight:bold
+.primary-btn,.secondary-btn{
+border:0;
+border-radius:10px;
+padding:12px 18px;
+cursor:pointer;
+font-weight:bold
 }
 
 .primary-btn{
-  background:#fff;
-  color:#111
+background:#fff;
+color:#111
 }
 
 .secondary-btn{
-  background:#242936;
-  color:#fff;
-  border:1px solid #363b48
+background:#242936;
+color:#fff;
+border:1px solid #363b48
 }
 
 .builder-layout{
-  display:grid;
-  grid-template-columns:1fr 1.4fr;
-  gap:16px
+display:grid;
+grid-template-columns:1fr 1.4fr;
+gap:16px
 }
 
-.code-panel,
-.preview-panel{
-  background:#11141b;
-  border:1px solid #292d38;
-  border-radius:16px;
-  overflow:hidden
+.code-panel,.preview-panel{
+background:#11141b;
+border:1px solid #292d38;
+border-radius:16px;
+overflow:hidden
 }
 
 .panel-header{
-  height:52px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 14px;
-  border-bottom:1px solid #292d38;
-  background:#151821
+height:52px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 14px;
+border-bottom:1px solid #292d38;
+background:#151821
 }
 
 .panel-title{
-  font-weight:bold;
-  font-size:14px
+font-weight:bold;
+font-size:14px
 }
 
 .code-area{
-  height:500px;
-  width:100%;
-  background:#0b0d12;
-  color:#d7dbe5;
-  border:0;
-  outline:0;
-  resize:none;
-  padding:15px;
-  font-family:monospace;
-  font-size:12px;
-  line-height:1.5
+height:500px;
+width:100%;
+background:#0b0d12;
+color:#d7dbe5;
+border:0;
+outline:0;
+resize:none;
+padding:15px;
+font-family:monospace;
+font-size:12px;
+line-height:1.5
 }
 
 .preview-wrap{
-  background:#d9d9d9;
-  padding:12px;
-  height:552px;
-  overflow:auto
+background:#d9d9d9;
+padding:12px;
+height:552px;
+overflow:auto
 }
 
 #websitePreview{
-  width:100%;
-  height:100%;
-  border:0;
-  background:white;
-  border-radius:8px
+width:100%;
+height:100%;
+border:0;
+background:white;
+border-radius:8px
 }
 
 .example-prompts{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px
 }
 
 .example{
-  background:#1c202a;
-  border:1px solid #303541;
-  color:#bbb;
-  padding:8px 11px;
-  border-radius:20px;
-  font-size:12px;
-  cursor:pointer
+background:#1c202a;
+border:1px solid #303541;
+color:#bbb;
+padding:8px 11px;
+border-radius:20px;
+font-size:12px;
+cursor:pointer
 }
 
 .example:hover{
-  color:white;
-  border-color:#666
+color:white;
+border-color:#666
 }
 
 .status{
-  color:#888;
-  font-size:12px
+color:#888;
+font-size:12px;
+margin-top:8px
+}
+
+.edit-box{
+margin-top:18px;
+background:#151821;
+border:1px solid #292d38;
+border-radius:16px;
+padding:16px
+}
+
+.edit-box h3{
+margin-bottom:8px
+}
+
+.edit-box p{
+color:#9297a4;
+font-size:13px;
+margin-bottom:12px
+}
+
+.edit-box textarea{
+width:100%;
+min-height:85px;
+resize:vertical;
+background:#0e1117;
+color:#fff;
+border:1px solid #303541;
+border-radius:12px;
+padding:15px;
+outline:none;
+font-size:15px
 }
 
 .mobile-preview{
-  max-width:390px !important;
-  margin:auto;
-  display:block
+max-width:390px!important;
+margin:auto;
+display:block
 }
-
-/* HISTORY */
 
 .history-card{
-  margin-bottom:12px;
-  cursor:default
+margin-bottom:12px;
+cursor:default
 }
-
-/* RESPONSIVE */
 
 @media(max-width:900px){
 
-  .sidebar{
-    width:75px;
-    padding:10px 7px
-  }
+.sidebar{
+width:75px;
+padding:10px 7px
+}
 
-  .logo{
-    font-size:18px;
-    padding:10px 5px 20px;
-    text-align:center
-  }
+.logo{
+font-size:18px;
+padding:10px 5px 20px;
+text-align:center
+}
 
-  .newchat{
-    font-size:0
-  }
+.newchat{
+font-size:0
+}
 
-  .newchat:after{
-    content:"+";
-    font-size:22px
-  }
+.newchat:after{
+content:"+";
+font-size:22px
+}
 
-  .nav button{
-    font-size:0;
-    text-align:center
-  }
+.nav button{
+font-size:0;
+text-align:center
+}
 
-  .nav button:before{
-    content:"•";
-    font-size:20px
-  }
+.nav button:before{
+content:"•";
+font-size:20px
+}
 
-  .builder-layout{
-    grid-template-columns:1fr
-  }
+.builder-layout{
+grid-template-columns:1fr
+}
 
-  .grid{
-    grid-template-columns:1fr
-  }
+.grid{
+grid-template-columns:1fr
+}
 
-  .hero h1{
-    font-size:36px
-  }
+.hero h1{
+font-size:36px
+}
 
-  .content{
-    padding:18px
-  }
+.content{
+padding:18px
+}
 }
 
 @media(max-width:600px){
 
-  .topbar{
-    padding:0 14px
-  }
+.topbar{
+padding:0 14px
+}
 
-  .topbar span{
-    display:none
-  }
+.topbar span{
+display:none
+}
 
-  .builder-header h2{
-    font-size:26px
-  }
+.builder-header h2{
+font-size:26px
+}
 
-  .preview-wrap{
-    height:450px
-  }
+.preview-wrap{
+height:450px
+}
 
-  .code-area{
-    height:350px
-  }
+.code-area{
+height:350px
+}
 }
 </style>
 </head>
@@ -485,62 +498,42 @@ button{
 
 <aside class="sidebar">
 
-  <div class="logo">NEXO</div>
+<div class="logo">NEXO</div>
 
-  <button class="newchat" onclick="show('chat')">
-    ＋ New Chat
-  </button>
+<button class="newchat" onclick="show('chat')">
+＋ New Chat
+</button>
 
-  <div class="nav">
+<div class="nav">
 
-    <button onclick="show('home')">
-      ⌂ Home
-    </button>
+<button onclick="show('home')">⌂ Home</button>
+<button onclick="show('chat')">◉ Chat</button>
+<button onclick="show('history')">◷ History</button>
+<button onclick="show('projects')">▣ Projects</button>
+<button onclick="show('builder')">⌘ Website Builder</button>
+<button onclick="show('files')">▤ Files</button>
+<button onclick="show('settings')">⚙ Settings</button>
 
-    <button onclick="show('chat')">
-      ◉ Chat
-    </button>
+</div>
 
-    <button onclick="show('history')">
-      ◷ History
-    </button>
+<div class="bottom nav">
 
-    <button onclick="show('projects')">
-      ▣ Projects
-    </button>
+<button onclick="alert('NEXO account system coming soon')">
+♙ Account
+</button>
 
-    <button onclick="show('builder')">
-      ⌘ Website Builder
-    </button>
-
-    <button onclick="show('files')">
-      ▤ Files
-    </button>
-
-    <button onclick="show('settings')">
-      ⚙ Settings
-    </button>
-
-  </div>
-
-  <div class="bottom nav">
-
-    <button onclick="alert('NEXO account system coming soon')">
-      ♙ Account
-    </button>
-
-  </div>
+</div>
 
 </aside>
 
 <main class="main">
 
-  <div class="topbar">
-    NEXO
-    <span>Your AI for everything</span>
-  </div>
+<div class="topbar">
+NEXO
+<span>Your AI for everything</span>
+</div>
 
-  <div class="content" id="content"></div>
+<div class="content" id="content"></div>
 
 </main>
 
@@ -548,828 +541,603 @@ button{
 
 <script>
 
-const BACKEND =
-"https://ksiei-ai-backend.onrender.com/chat";
+const BACKEND="https://ksiei-ai-backend.onrender.com/chat";
 
-let historyData =
-JSON.parse(localStorage.getItem("nexo_history") || "[]");
+let historyData=
+JSON.parse(localStorage.getItem("nexo_history")||"[]");
 
-let currentWebsite = "";
+let currentWebsite="";
 
-
-/* =========================
-   MAIN NAVIGATION
-========================= */
 
 function show(screen){
 
-  const c =
-  document.getElementById("content");
+const c=document.getElementById("content");
 
 
-  /* HOME */
+if(screen==="home"){
 
-  if(screen === "home"){
+c.innerHTML=`
 
-    c.innerHTML = `
+<div class="hero">
+<h1>What can I help you build?</h1>
+<p>Chat, code, create websites, manage projects and more.</p>
+</div>
 
-      <div class="hero">
+<div class="grid">
 
-        <h1>
-          What can I help you build?
-        </h1>
+<div class="card" onclick="show('chat')">
+<h3>💬 AI Chat</h3>
+<p>Ask questions, brainstorm ideas and get AI assistance.</p>
+</div>
 
-        <p>
-          Chat, code, create websites,
-          manage projects and more.
-        </p>
+<div class="card" onclick="show('builder')">
+<h3>🌐 Website Builder</h3>
+<p>Describe your website and generate a live preview.</p>
+</div>
 
-      </div>
+<div class="card" onclick="show('projects')">
+<h3>🚀 Projects</h3>
+<p>Create and manage your NEXO projects.</p>
+</div>
 
-      <div class="grid">
+<div class="card" onclick="show('files')">
+<h3>📁 Files</h3>
+<p>Work with your project files.</p>
+</div>
 
-        <div class="card"
-             onclick="show('chat')">
+<div class="card" onclick="show('history')">
+<h3>🕘 History</h3>
+<p>View previous NEXO conversations.</p>
+</div>
 
-          <h3>💬 AI Chat</h3>
+<div class="card" onclick="show('settings')">
+<h3>⚙ Settings</h3>
+<p>Manage your NEXO settings.</p>
+</div>
 
-          <p>
-            Ask questions, brainstorm ideas
-            and get AI assistance.
-          </p>
+</div>`;
 
-        </div>
+return;
+}
 
 
-        <div class="card"
-             onclick="show('builder')">
+if(screen==="chat"){
 
-          <h3>🌐 Website Builder</h3>
+c.innerHTML=`
 
-          <p>
-            Describe your website and
-            generate a live preview.
-          </p>
+<div class="chat">
 
-        </div>
+<div class="messages" id="messages">
 
+<div class="msg ai">
+Hello! I'm NEXO. 👋
+<br><br>
+Tell me what you want to do.
+</div>
 
-        <div class="card"
-             onclick="show('projects')">
+</div>
 
-          <h3>🚀 Projects</h3>
+<div class="inputbox">
 
-          <p>
-            Create and manage your
-            NEXO projects.
-          </p>
+<textarea
+id="message"
+placeholder="Message NEXO..."
+onkeydown="enterKey(event)"></textarea>
 
-        </div>
+<button onclick="sendMessage()">➤</button>
 
+</div>
 
-        <div class="card"
-             onclick="show('files')">
+</div>`;
 
-          <h3>📁 Files</h3>
+return;
+}
 
-          <p>
-            Work with your project files.
-          </p>
 
-        </div>
+if(screen==="builder"){
 
+c.innerHTML=`
 
-        <div class="card"
-             onclick="show('history')">
+<div class="builder">
 
-          <h3>🕘 History</h3>
+<div class="builder-header">
 
-          <p>
-            View previous NEXO conversations.
-          </p>
+<h2>🌐 NEXO Website Builder</h2>
 
-        </div>
+<p>
+Describe your website and generate a live website preview.
+</p>
 
+</div>
 
-        <div class="card"
-             onclick="show('settings')">
 
-          <h3>⚙ Settings</h3>
+<div class="builder-box">
 
-          <p>
-            Manage your NEXO settings.
-          </p>
+<textarea
+id="builderPrompt"
+placeholder="Example: Create a modern restaurant website with a hero section, menu section and contact button..."></textarea>
 
-        </div>
 
-      </div>
+<div class="example-prompts">
 
-    `;
+<button class="example"
+onclick="useExample('Create a modern restaurant website with menu, about us and contact section')">
+🍔 Restaurant
+</button>
 
-    return;
-  }
+<button class="example"
+onclick="useExample('Create a modern portfolio website for a video editor')">
+🎬 Portfolio
+</button>
 
+<button class="example"
+onclick="useExample('Create a modern shopping website with products and cart')">
+🛒 Shopping
+</button>
 
-  /* CHAT */
+<button class="example"
+onclick="useExample('Create a modern business website with services and contact section')">
+💼 Business
+</button>
 
-  if(screen === "chat"){
+</div>
 
-    c.innerHTML = `
 
-      <div class="chat">
+<div class="builder-actions">
 
-        <div class="messages" id="messages">
+<button class="primary-btn" onclick="generateWebsite()">
+⚡ Generate Website
+</button>
 
-          <div class="msg ai">
+<button class="secondary-btn" onclick="clearBuilder()">
+Clear
+</button>
 
-            Hello! I'm NEXO. 👋
+</div>
 
-            <br><br>
+</div>
 
-            Tell me what you want to do.
 
-          </div>
+<div class="builder-layout">
 
-        </div>
+<div class="code-panel">
 
+<div class="panel-header">
 
-        <div class="inputbox">
+<div class="panel-title">
+💻 Generated HTML
+</div>
 
-          <textarea
-            id="message"
-            placeholder="Message NEXO..."
-            onkeydown="enterKey(event)">
-          </textarea>
+<button
+class="secondary-btn"
+onclick="copyWebsiteCode()">
+Copy Code
+</button>
 
-          <button onclick="sendMessage()">
-            ➤
-          </button>
+</div>
 
-        </div>
+<textarea
+id="codeArea"
+class="code-area"
+spellcheck="false"
+placeholder="Generated website code will appear here..."></textarea>
 
-      </div>
+</div>
 
-    `;
 
-    return;
-  }
+<div class="preview-panel">
 
+<div class="panel-header">
 
-  /* WEBSITE BUILDER */
+<div class="panel-title">
+👀 Live Preview
+</div>
 
-  if(screen === "builder"){
+<div>
 
-    c.innerHTML = `
+<button
+class="secondary-btn"
+onclick="refreshPreview()">↻</button>
 
-      <div class="builder">
+<button
+class="secondary-btn"
+onclick="toggleMobilePreview()">📱</button>
 
-        <div class="builder-header">
+</div>
 
-          <h2>
-            🌐 NEXO Website Builder
-          </h2>
+</div>
 
-          <p>
-            Describe your website and
-            generate a live website preview.
-          </p>
+<div class="preview-wrap" id="previewWrap">
 
-        </div>
+<iframe
+id="websitePreview"
+title="NEXO Website Preview">
+</iframe>
 
+</div>
 
-        <div class="builder-box">
+</div>
 
-          <textarea
-            id="builderPrompt"
-            placeholder="Example: Create a modern restaurant website with a hero section, menu, about section and contact button..."></textarea>
+</div>
 
 
-          <div class="example-prompts">
+<div class="edit-box">
 
-            <button class="example"
-              onclick="useExample('Create a modern restaurant website with menu, about us and contact section')">
-              🍔 Restaurant
-            </button>
+<h3>✨ Edit Website with Prompt</h3>
 
-            <button class="example"
-              onclick="useExample('Create a modern portfolio website for a video editor')">
-              🎬 Portfolio
-            </button>
+<p>
+Tell NEXO what you want to change in the current website.
+</p>
 
-            <button class="example"
-              onclick="useExample('Create a modern shopping website with products and cart')">
-              🛒 Shopping
-            </button>
+<textarea
+id="editPrompt"
+placeholder="Example: Make the background black, add a menu section and change the Contact button to red..."></textarea>
 
-            <button class="example"
-              onclick="useExample('Create a modern business website with services and contact section')">
-              💼 Business
-            </button>
+<div class="builder-actions">
 
-          </div>
+<button
+class="primary-btn"
+onclick="editWebsite()">
+✨ Apply Changes
+</button>
 
+<button
+class="secondary-btn"
+onclick="document.getElementById('editPrompt').value=''">
+Clear
+</button>
 
-          <div class="builder-actions">
+</div>
 
-            <button
-              class="primary-btn"
-              onclick="generateWebsite()">
+<div class="status" id="editStatus">
+Ready to edit your website.
+</div>
 
-              ⚡ Generate Website
+</div>
 
-            </button>
+</div>`;
 
+loadSavedWebsite();
 
-            <button
-              class="secondary-btn"
-              onclick="clearBuilder()">
+return;
+}
 
-              Clear
 
-            </button>
+if(screen==="projects"){
 
-          </div>
+c.innerHTML=`
 
-        </div>
+<div class="page">
 
+<h2>🚀 Projects</h2>
 
-        <div class="builder-layout">
+<p>Your NEXO projects will appear here.</p>
 
+<div class="grid">
 
-          <!-- CODE -->
+<div class="card" onclick="show('builder')">
 
-          <div class="code-panel">
+<h3>＋ New Website Project</h3>
 
-            <div class="panel-header">
+<p>Start building a new website.</p>
 
-              <div class="panel-title">
-                💻 Generated HTML
-              </div>
+</div>
 
-              <button
-                class="secondary-btn"
-                onclick="copyWebsiteCode()">
+</div>
 
-                Copy Code
+</div>`;
 
-              </button>
+return;
+}
 
-            </div>
 
+if(screen==="history"){
 
-            <textarea
-              id="codeArea"
-              class="code-area"
-              spellcheck="false"
-              placeholder="Generated website code will appear here...">
-            </textarea>
+let html=historyData.length?
 
-          </div>
+historyData.map(x=>`
 
+<div class="card history-card">
 
-          <!-- PREVIEW -->
+<h3>${escapeHTML(x.message)}</h3>
 
-          <div class="preview-panel">
+<p>${escapeHTML(x.reply)}</p>
 
-            <div class="panel-header">
+</div>
 
-              <div class="panel-title">
-                👀 Live Preview
-              </div>
+`).join("")
 
-              <div>
+:
 
-                <button
-                  class="secondary-btn"
-                  onclick="refreshPreview()">
+`
 
-                  ↻
+<div class="card">
 
-                </button>
+<h3>No conversations yet</h3>
 
-                <button
-                  class="secondary-btn"
-                  onclick="toggleMobilePreview()">
+<p>Start chatting with NEXO.</p>
 
-                  📱
+</div>
 
-                </button>
+`;
 
-              </div>
 
-            </div>
+c.innerHTML=`
 
+<div class="page">
 
-            <div
-              class="preview-wrap"
-              id="previewWrap">
+<h2>🕘 Chat History</h2>
 
-              <iframe
-                id="websitePreview"
-                title="NEXO Website Preview">
-              </iframe>
+<p>Your previous NEXO conversations.</p>
 
-            </div>
+<div class="grid">${html}</div>
 
-          </div>
+</div>`;
 
-        </div>
+return;
+}
 
-      </div>
 
-    `;
+if(screen==="files"){
 
-    loadSavedWebsite();
+c.innerHTML=`
 
-    return;
-  }
+<div class="page">
 
+<h2>📁 Files</h2>
 
-  /* PROJECTS */
+<p>Project files and uploads.</p>
 
-  if(screen === "projects"){
+<div class="card">
 
-    c.innerHTML = `
+<h3>Upload File</h3>
 
-      <div class="page">
+<p>
+File management system will be connected here.
+</p>
 
-        <h2>🚀 Projects</h2>
+<br>
 
-        <p>
-          Your NEXO projects will appear here.
-        </p>
+<input type="file">
 
-        <div class="grid">
+</div>
 
-          <div class="card"
-               onclick="show('builder')">
+</div>`;
 
-            <h3>＋ New Website Project</h3>
+return;
+}
 
-            <p>
-              Start building a new website.
-            </p>
 
-          </div>
+if(screen==="settings"){
 
-        </div>
+c.innerHTML=`
 
-      </div>
+<div class="page">
 
-    `;
+<h2>⚙ Settings</h2>
 
-    return;
-  }
+<p>NEXO settings.</p>
 
+<div class="card">
 
-  /* HISTORY */
+<h3>Account</h3>
 
-  if(screen === "history"){
+<p>
+Authentication and profile settings will be connected here.
+</p>
 
-    let html =
-    historyData.length
+</div>
 
-    ?
+</div>`;
 
-    historyData.map(x => `
-
-      <div class="card history-card">
-
-        <h3>
-          ${escapeHTML(x.message)}
-        </h3>
-
-        <p>
-          ${escapeHTML(x.reply)}
-        </p>
-
-      </div>
-
-    `).join("")
-
-    :
-
-    `
-
-      <div class="card">
-
-        <h3>
-          No conversations yet
-        </h3>
-
-        <p>
-          Start chatting with NEXO.
-        </p>
-
-      </div>
-
-    `;
-
-
-    c.innerHTML = `
-
-      <div class="page">
-
-        <h2>
-          🕘 Chat History
-        </h2>
-
-        <p>
-          Your previous NEXO conversations.
-        </p>
-
-        <div class="grid">
-          ${html}
-        </div>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  /* FILES */
-
-  if(screen === "files"){
-
-    c.innerHTML = `
-
-      <div class="page">
-
-        <h2>📁 Files</h2>
-
-        <p>
-          Project files and uploads.
-        </p>
-
-        <div class="card">
-
-          <h3>
-            Upload File
-          </h3>
-
-          <p>
-            File management system will
-            be connected here.
-          </p>
-
-          <br>
-
-          <input type="file">
-
-        </div>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  /* SETTINGS */
-
-  if(screen === "settings"){
-
-    c.innerHTML = `
-
-      <div class="page">
-
-        <h2>⚙ Settings</h2>
-
-        <p>
-          NEXO settings.
-        </p>
-
-        <div class="card">
-
-          <h3>
-            Account
-          </h3>
-
-          <p>
-            Authentication and profile
-            settings will be connected here.
-          </p>
-
-        </div>
-
-      </div>
-
-    `;
-
-    return;
-  }
+return;
+}
 
 }
 
 
-/* =========================
-   CHAT
-========================= */
+/* CHAT */
 
 function enterKey(e){
 
-  if(
-    e.key === "Enter" &&
-    !e.shiftKey
-  ){
+if(e.key==="Enter"&&!e.shiftKey){
 
-    e.preventDefault();
+e.preventDefault();
+sendMessage();
 
-    sendMessage();
-
-  }
+}
 
 }
 
 
 async function sendMessage(){
 
-  const input =
-  document.getElementById("message");
+const input=document.getElementById("message");
+const messages=document.getElementById("messages");
 
-  const messages =
-  document.getElementById("messages");
+if(!input||!input.value.trim())return;
 
-  if(
-    !input ||
-    !input.value.trim()
-  ) return;
+const message=input.value.trim();
 
+messages.innerHTML+=`
 
-  const message =
-  input.value.trim();
+<div class="msg user">
+${escapeHTML(message)}
+</div>`;
 
+input.value="";
 
-  messages.innerHTML += `
+const loading=document.createElement("div");
 
-    <div class="msg user">
-      ${escapeHTML(message)}
-    </div>
+loading.className="msg ai";
+loading.textContent="NEXO is thinking...";
 
-  `;
+messages.appendChild(loading);
 
 
-  input.value = "";
+try{
 
+const response=await fetch(BACKEND,{
 
-  const loading =
-  document.createElement("div");
+method:"POST",
 
-  loading.className = "msg ai";
+headers:{
+"Content-Type":"application/json"
+},
 
-  loading.textContent =
-  "NEXO is thinking...";
+body:JSON.stringify({
+message:message
+})
 
-  messages.appendChild(loading);
+});
 
+const data=await response.json();
 
-  try{
+if(!response.ok){
 
-    const response =
-    await fetch(BACKEND,{
+loading.textContent=
+"AI temporarily unavailable. Website Builder can still be used.";
 
-      method:"POST",
+return;
 
-      headers:{
-        "Content-Type":
-        "application/json"
-      },
+}
 
-      body:JSON.stringify({
-        message:message
-      })
+loading.textContent=
+data.reply||"NEXO received an empty response.";
 
-    });
+historyData.push({
+message:message,
+reply:data.reply||""
+});
 
+localStorage.setItem(
+"nexo_history",
+JSON.stringify(historyData)
+);
 
-    const data =
-    await response.json();
+}catch(error){
 
+loading.textContent="AI connection unavailable.";
 
-    if(!response.ok){
+}
 
-      loading.textContent =
-      "AI temporarily unavailable. " +
-      "Website Builder can still be used.";
-
-      return;
-
-    }
-
-
-    loading.textContent =
-    data.reply ||
-    "NEXO received an empty response.";
-
-
-    historyData.push({
-
-      message:message,
-
-      reply:data.reply || ""
-
-    });
-
-
-    localStorage.setItem(
-      "nexo_history",
-      JSON.stringify(historyData)
-    );
-
-
-  }catch(error){
-
-    loading.textContent =
-    "AI connection unavailable.";
-
-  }
-
-
-  messages.scrollTop =
-  messages.scrollHeight;
+messages.scrollTop=messages.scrollHeight;
 
 }
 
 
-/* =========================
-   WEBSITE BUILDER
-========================= */
+/* WEBSITE BUILDER */
 
 function useExample(text){
 
-  const input =
-  document.getElementById(
-    "builderPrompt"
-  );
+const input=document.getElementById("builderPrompt");
 
-  if(input){
+if(input){
 
-    input.value = text;
+input.value=text;
+input.focus();
 
-    input.focus();
-
-  }
+}
 
 }
 
 
 function generateWebsite(){
 
-  const input =
-  document.getElementById(
-    "builderPrompt"
-  );
+const input=document.getElementById("builderPrompt");
+const codeArea=document.getElementById("codeArea");
 
-  const codeArea =
-  document.getElementById(
-    "codeArea"
-  );
+if(!input||!input.value.trim()){
 
-  if(
-    !input ||
-    !input.value.trim()
-  ){
+alert("First describe the website you want.");
+return;
 
-    alert(
-      "First describe the website you want."
-    );
+}
 
-    return;
+const prompt=input.value.toLowerCase();
 
-  }
+let type="business";
 
+if(
+prompt.includes("restaurant")||
+prompt.includes("food")||
+prompt.includes("cafe")
+){
 
-  const prompt =
-  input.value.toLowerCase();
+type="restaurant";
 
+}
 
-  let type = "business";
+else if(
+prompt.includes("portfolio")||
+prompt.includes("video editor")||
+prompt.includes("designer")
+){
 
+type="portfolio";
 
-  if(
-    prompt.includes("restaurant") ||
-    prompt.includes("food") ||
-    prompt.includes("cafe")
-  ){
+}
 
-    type = "restaurant";
+else if(
+prompt.includes("shopping")||
+prompt.includes("shop")||
+prompt.includes("ecommerce")||
+prompt.includes("e-commerce")
+){
 
-  }
+type="shopping";
 
-  else if(
-    prompt.includes("portfolio") ||
-    prompt.includes("video editor") ||
-    prompt.includes("designer")
-  ){
+}
 
-    type = "portfolio";
+const website=createWebsite(type);
 
-  }
+currentWebsite=website;
 
-  else if(
-    prompt.includes("shopping") ||
-    prompt.includes("shop") ||
-    prompt.includes("ecommerce") ||
-    prompt.includes("e-commerce")
-  ){
+codeArea.value=website;
 
-    type = "shopping";
+refreshPreview();
 
-  }
-
-
-  const website =
-  createWebsite(type);
-
-
-  currentWebsite =
-  website;
-
-
-  codeArea.value =
-  website;
-
-
-  refreshPreview();
-
-
-  localStorage.setItem(
-    "nexo_website",
-    website
-  );
+localStorage.setItem("nexo_website",website);
 
 }
 
 
 function createWebsite(type){
 
-  let title =
-  "NEXO Business";
+let title="NEXO Business";
+let subtitle="Build something amazing with NEXO.";
+let heroButton="Get Started";
 
-  let subtitle =
-  "Build something amazing with NEXO.";
+if(type==="restaurant"){
 
-  let heroButton =
-  "Get Started";
+title="Urban Kitchen";
+subtitle="Fresh food. Great taste. Made for you.";
+heroButton="View Menu";
 
+}
 
-  if(type === "restaurant"){
+if(type==="portfolio"){
 
-    title =
-    "Urban Kitchen";
+title="Creative Studio";
+subtitle="Video editing, design and digital creativity.";
+heroButton="View My Work";
 
-    subtitle =
-    "Fresh food. Great taste. Made for you.";
+}
 
-    heroButton =
-    "View Menu";
+if(type==="shopping"){
 
-  }
+title="NEXO Store";
+subtitle="Discover products you will love.";
+heroButton="Shop Now";
 
-
-  if(type === "portfolio"){
-
-    title =
-    "Creative Studio";
-
-    subtitle =
-    "Video editing, design and digital creativity.";
-
-    heroButton =
-    "View My Work";
-
-  }
+}
 
 
-  if(type === "shopping"){
-
-    title =
-    "NEXO Store";
-
-    subtitle =
-    "Discover products you will love.";
-
-    heroButton =
-    "Shop Now";
-
-  }
-
-
-  return `<!DOCTYPE html>
-
+return `<!DOCTYPE html>
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title>
 
 <style>
@@ -1414,11 +1182,7 @@ align-items:center;
 justify-content:center;
 text-align:center;
 padding:40px 20px;
-background:linear-gradient(
-135deg,
-#111827,
-#312e81
-);
+background:linear-gradient(135deg,#111827,#312e81);
 color:white
 }
 
@@ -1461,8 +1225,7 @@ margin-bottom:35px
 
 .cards{
 display:grid;
-grid-template-columns:
-repeat(3,1fr);
+grid-template-columns:repeat(3,1fr);
 gap:20px;
 max-width:1100px;
 margin:auto
@@ -1473,8 +1236,7 @@ padding:25px;
 border:1px solid #eee;
 border-radius:15px;
 background:#fff;
-box-shadow:
-0 8px 25px rgba(0,0,0,.05)
+box-shadow:0 8px 25px rgba(0,0,0,.05)
 }
 
 .card h3{
@@ -1519,16 +1281,13 @@ display:none
 }
 
 </style>
-
 </head>
 
 <body>
 
 <nav>
 
-<div class="logo">
-${title}
-</div>
+<div class="logo">${title}</div>
 
 <div>
 <a href="#home">Home</a>
@@ -1538,79 +1297,52 @@ ${title}
 
 </nav>
 
-
-<section
-class="hero"
-id="home">
+<section class="hero" id="home">
 
 <div class="hero-content">
 
-<h1>
-${title}
-</h1>
+<h1>${title}</h1>
 
-<p>
-${subtitle}
-</p>
+<p>${subtitle}</p>
 
-<a
-href="#about"
-class="btn">
-${heroButton}
-</a>
+<a href="#about" class="btn">${heroButton}</a>
 
 </div>
 
 </section>
 
+<section class="section" id="about">
 
-<section
-class="section"
-id="about">
-
-<h2>
-What We Offer
-</h2>
+<h2>What We Offer</h2>
 
 <div class="cards">
 
 <div class="card">
 
-<h3>
-✨ Quality
-</h3>
+<h3>✨ Quality</h3>
 
 <p>
-Modern design and a smooth
-experience for every visitor.
+Modern design and a smooth experience for every visitor.
 </p>
 
 </div>
 
-
 <div class="card">
 
-<h3>
-🚀 Fast
-</h3>
+<h3>🚀 Fast</h3>
 
 <p>
-Built with a responsive,
-mobile-friendly experience.
+Built with a responsive, mobile-friendly experience.
 </p>
 
 </div>
 
-
 <div class="card">
 
-<h3>
-💡 Creative
-</h3>
+<h3>💡 Creative</h3>
 
 <p>
-A clean and professional
-digital experience.
+A clean and professional digital experience.
 </p>
 
 </div>
@@ -1619,241 +1351,430 @@ digital experience.
 
 </section>
 
+<section class="section contact" id="contact">
 
-<section
-class="section contact"
-id="contact">
+<h2>Let's Work Together</h2>
 
-<h2>
-Let's Work Together
-</h2>
-
-<p>
-Ready to start something amazing?
-</p>
+<p>Ready to start something amazing?</p>
 
 <br>
 
-<a
-href="mailto:hello@example.com"
-class="btn">
+<a href="mailto:hello@example.com" class="btn">
 Contact Us
 </a>
 
 </section>
 
-
 <footer>
-
 Built with NEXO ✨
-
 </footer>
 
-
 </body>
-
 </html>`;
 
 }
 
 
-/* =========================
-   PREVIEW
-========================= */
+/* EDIT WEBSITE */
+
+function editWebsite(){
+
+const codeArea=document.getElementById("codeArea");
+const promptBox=document.getElementById("editPrompt");
+const status=document.getElementById("editStatus");
+
+if(!codeArea||!codeArea.value.trim()){
+
+alert("First generate a website.");
+
+return;
+
+}
+
+if(!promptBox||!promptBox.value.trim()){
+
+alert("Tell NEXO what you want to change.");
+
+return;
+
+}
+
+let code=codeArea.value;
+const prompt=promptBox.value.toLowerCase();
+
+status.textContent="Applying your changes...";
+
+
+/* BACKGROUND */
+
+if(
+prompt.includes("black background")||
+prompt.includes("background black")||
+prompt.includes("dark background")
+){
+
+code=code.replace(
+"background:#f5f5f5",
+"background:#0b0b0b"
+);
+
+code=code.replace(
+"color:#171717",
+"color:#ffffff"
+);
+
+}
+
+
+/* WHITE BACKGROUND */
+
+if(
+prompt.includes("white background")||
+prompt.includes("background white")
+){
+
+code=code.replace(
+"background:#f5f5f5",
+"background:#ffffff"
+);
+
+}
+
+
+/* RED BUTTON */
+
+if(
+prompt.includes("red button")||
+prompt.includes("button red")||
+prompt.includes("contact button red")
+){
+
+code=code.replace(
+"background:white;\ncolor:#111",
+"background:#ef4444;\ncolor:white"
+);
+
+}
+
+
+/* BLUE BUTTON */
+
+if(
+prompt.includes("blue button")||
+prompt.includes("button blue")
+){
+
+code=code.replace(
+"background:white;\ncolor:#111",
+"background:#2563eb;\ncolor:white"
+);
+
+}
+
+
+/* CHANGE TITLE */
+
+const titleMatch=
+prompt.match(
+/(?:website name|site name|title|name)\s+(?:to|as)\s+["']?([^"']+)["']?/
+);
+
+if(titleMatch){
+
+const newTitle=titleMatch[1]
+.trim()
+.replace(/[.]+$/,"");
+
+code=code.replace(
+/<title>.*?<\/title>/,
+"<title>"+newTitle+"</title>"
+);
+
+code=code.replace(
+/<div class="logo">.*?<\/div>/,
+'<div class="logo">'+newTitle+'</div>'
+);
+
+code=code.replace(
+/<h1>.*?<\/h1>/,
+"<h1>"+newTitle+"</h1>"
+);
+
+}
+
+
+/* ADD MENU SECTION */
+
+if(
+prompt.includes("add menu")||
+prompt.includes("menu section")||
+prompt.includes("add a menu")
+){
+
+if(!code.includes('id="menu"')){
+
+const menu=`
+
+<section class="section" id="menu">
+
+<h2>Our Menu</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🍔 Classic Burger</h3>
+<p>Fresh ingredients and delicious taste.</p>
+</div>
+
+<div class="card">
+<h3>🍕 Special Pizza</h3>
+<p>Hot, fresh and made with quality ingredients.</p>
+</div>
+
+<div class="card">
+<h3>🥗 Fresh Salad</h3>
+<p>Healthy, fresh and full of flavour.</p>
+</div>
+
+</div>
+
+</section>
+`;
+
+code=code.replace(
+'<section class="section contact"',
+menu+'<section class="section contact"'
+);
+
+code=code.replace(
+'<a href="#contact">Contact</a>',
+'<a href="#menu">Menu</a><a href="#contact">Contact</a>'
+);
+
+}
+
+}
+
+
+/* ADD SERVICES */
+
+if(
+prompt.includes("add services")||
+prompt.includes("services section")
+){
+
+if(!code.includes('id="services"')){
+
+const services=`
+
+<section class="section" id="services">
+
+<h2>Our Services</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🚀 Fast Service</h3>
+<p>Quick and reliable service for every customer.</p>
+</div>
+
+<div class="card">
+<h3>⭐ Premium Quality</h3>
+<p>Professional quality and attention to detail.</p>
+</div>
+
+<div class="card">
+<h3>💡 Custom Solutions</h3>
+<p>Solutions designed around your needs.</p>
+</div>
+
+</div>
+
+</section>
+`;
+
+code=code.replace(
+'<section class="section contact"',
+services+'<section class="section contact"'
+);
+
+}
+
+}
+
+
+/* ADD ABOUT */
+
+if(
+prompt.includes("add about")||
+prompt.includes("about section")
+){
+
+if(!code.includes('id="about-extra"')){
+
+const about=`
+
+<section class="section" id="about-extra">
+
+<h2>About Us</h2>
+
+<p style="max-width:800px;margin:auto;text-align:center;line-height:1.7;color:#666">
+We are passionate about creating quality experiences for our customers.
+Our goal is to combine great design, quality and simplicity.
+</p>
+
+</section>
+`;
+
+code=code.replace(
+'<section class="section contact"',
+about+'<section class="section contact"'
+);
+
+}
+
+}
+
+
+/* FOOTER */
+
+if(
+prompt.includes("footer black")||
+prompt.includes("black footer")
+){
+
+code=code.replace(
+"background:#111827",
+"background:#000000"
+);
+
+}
+
+
+/* SAVE + PREVIEW */
+
+codeArea.value=code;
+
+currentWebsite=code;
+
+localStorage.setItem(
+"nexo_website",
+code
+);
+
+refreshPreview();
+
+status.textContent="Changes applied successfully! ✨";
+
+promptBox.value="";
+
+}
+
+
+/* PREVIEW */
 
 function refreshPreview(){
 
-  const codeArea =
-  document.getElementById(
-    "codeArea"
-  );
+const codeArea=document.getElementById("codeArea");
+const preview=document.getElementById("websitePreview");
 
-  const preview =
-  document.getElementById(
-    "websitePreview"
-  );
+if(!codeArea||!preview)return;
 
-  if(
-    !codeArea ||
-    !preview
-  ) return;
+currentWebsite=codeArea.value;
 
-
-  currentWebsite =
-  codeArea.value;
-
-
-  preview.srcdoc =
-  currentWebsite;
+preview.srcdoc=currentWebsite;
 
 }
 
 
 function toggleMobilePreview(){
 
-  const preview =
-  document.getElementById(
-    "websitePreview"
-  );
+const preview=document.getElementById("websitePreview");
 
-  if(!preview) return;
+if(!preview)return;
 
-
-  preview.classList.toggle(
-    "mobile-preview"
-  );
+preview.classList.toggle("mobile-preview");
 
 }
 
 
 function copyWebsiteCode(){
 
-  const codeArea =
-  document.getElementById(
-    "codeArea"
-  );
+const codeArea=document.getElementById("codeArea");
 
-  if(
-    !codeArea ||
-    !codeArea.value
-  ){
+if(!codeArea||!codeArea.value){
 
-    alert(
-      "Generate a website first."
-    );
+alert("Generate a website first.");
 
-    return;
+return;
 
-  }
+}
 
+navigator.clipboard
+.writeText(codeArea.value)
+.then(()=>{
 
-  navigator.clipboard
-  .writeText(codeArea.value)
-  .then(()=>{
+alert("Website code copied! 📋");
 
-    alert(
-      "Website code copied! 📋"
-    );
+})
+.catch(()=>{
 
-  })
+codeArea.select();
 
-  .catch(()=>{
+document.execCommand("copy");
 
-    codeArea.select();
+alert("Website code copied! 📋");
 
-    document.execCommand("copy");
-
-    alert(
-      "Website code copied! 📋"
-    );
-
-  });
+});
 
 }
 
 
 function clearBuilder(){
 
-  const input =
-  document.getElementById(
-    "builderPrompt"
-  );
+const input=document.getElementById("builderPrompt");
+const edit=document.getElementById("editPrompt");
+const code=document.getElementById("codeArea");
+const preview=document.getElementById("websitePreview");
 
-  const code =
-  document.getElementById(
-    "codeArea"
-  );
+if(input)input.value="";
+if(edit)edit.value="";
+if(code)code.value="";
+if(preview)preview.srcdoc="";
 
-  const preview =
-  document.getElementById(
-    "websitePreview"
-  );
-
-
-  if(input)
-    input.value = "";
-
-  if(code)
-    code.value = "";
-
-  if(preview)
-    preview.srcdoc = "";
-
-  localStorage.removeItem(
-    "nexo_website"
-  );
+localStorage.removeItem("nexo_website");
 
 }
 
 
 function loadSavedWebsite(){
 
-  const saved =
-  localStorage.getItem(
-    "nexo_website"
-  );
+const saved=localStorage.getItem("nexo_website");
 
-  const code =
-  document.getElementById(
-    "codeArea"
-  );
+const code=document.getElementById("codeArea");
 
+if(saved&&code){
 
-  if(
-    saved &&
-    code
-  ){
-
-    code.value =
-    saved;
-
-    currentWebsite =
-    saved;
-
-    refreshPreview();
-
-  }
+code.value=saved;
+currentWebsite=saved;
+refreshPreview();
 
 }
 
+}
 
-/* =========================
-   SECURITY
-========================= */
 
 function escapeHTML(text){
 
-  return String(text)
-
-  .replaceAll(
-    "&",
-    "&amp;"
-  )
-
-  .replaceAll(
-    "<",
-    "&lt;"
-  )
-
-  .replaceAll(
-    ">",
-    "&gt;"
-  )
-
-  .replaceAll(
-    '"',
-    "&quot;"
-  )
-
-  .replaceAll(
-    "'",
-    "&#039;"
-  );
+return String(text)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 
 }
 
-
-/* START */
 
 show("home");
 
