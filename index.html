@@ -1214,7 +1214,7 @@ Business
 <div class="builder-actions">
 
 <button class="primary" onclick="generateWebsite()">
-Generate Website
+Generate with NEXO AI
 </button>
 
 <button class="secondary" onclick="clearBuilder()">
@@ -1488,33 +1488,73 @@ sendMessage();
 }
 
 
-async function sendMessage(){
-const input=document.getElementById("chatInput");const messages=document.getElementById("chatMessages");if(!input||!messages)return;
-const message=input.value.trim();if(!message)return;
-const conversation=ensureConversation(message.slice(0,60));
-if(conversation.messages.length===0){conversation.title=message.slice(0,60);}
-conversation.messages.push({role:"user",content:message});conversation.updatedAt=new Date().toLocaleString();persistConversations();
-messages.innerHTML+=`<div class="message user">${escapeHTML(message)}</div>`;input.value="";
-const loading=document.createElement("div");loading.className="message ai";loading.textContent="NEXO is thinking...";messages.appendChild(loading);messages.scrollTop=messages.scrollHeight;
-let lastError="";
-try{
-  let response=null;
+async function callNexoAI(prompt){
+  let lastError="";
   for(let attempt=1;attempt<=3;attempt++){
-    try{response=await fetch(BACKEND,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:message})});if(response.ok)break;lastError="HTTP "+response.status;}catch(e){lastError=e.message||"Network error";}
+    try{
+      const response=await fetch(BACKEND,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({message:prompt})
+      });
+      if(!response.ok){lastError="HTTP "+response.status;}
+      else{
+        const data=await response.json();
+        const reply=data.reply||data.message||data.response;
+        if(reply)return reply;
+        lastError="Empty AI response";
+      }
+    }catch(e){lastError=e.message||"Network error";}
     if(attempt<3)await new Promise(r=>setTimeout(r,1200*attempt));
   }
-  if(!response||!response.ok)throw new Error(lastError||"Backend unavailable");
-  const data=await response.json();
-  const reply=data.reply||data.message||data.response;
-  if(!reply)throw new Error("Empty AI response");
-  loading.remove();messages.innerHTML+=`<div class="message ai">${escapeHTML(reply)}</div>`;
-  conversation.messages.push({role:"ai",content:reply});conversation.updatedAt=new Date().toLocaleString();persistConversations();
-}catch(error){
-  loading.textContent="AI response is currently unavailable. The chat backend is not responding.";
-  loading.title=String(error.message||error);
-  conversation.messages.push({role:"ai",content:"AI response is currently unavailable. The chat backend is not responding."});conversation.updatedAt=new Date().toLocaleString();persistConversations();
+  throw new Error(lastError||"AI backend unavailable");
 }
-messages.scrollTop=messages.scrollHeight;
+
+function extractAIHTML(text){
+  let value=String(text||"").trim();
+  const fenced=value.match(/```(?:html)?\\s*([\\s\\S]*?)```/i);
+  if(fenced)value=fenced[1].trim();
+  const start=value.toLowerCase().indexOf("<!doctype html");
+  const htmlStart=start>=0?start:value.toLowerCase().indexOf("<html");
+  if(htmlStart>=0)value=value.slice(htmlStart);
+  const end=value.toLowerCase().lastIndexOf("</html>");
+  if(end>=0)value=value.slice(0,end+7);
+  return value.trim();
+}
+
+async function sendMessage(){
+  const input=document.getElementById("chatInput");
+  const messages=document.getElementById("chatMessages");
+  if(!input||!messages)return;
+  const message=input.value.trim();
+  if(!message)return;
+  const conversation=ensureConversation(message.slice(0,60));
+  if(conversation.messages.length===0)conversation.title=message.slice(0,60);
+  conversation.messages.push({role:"user",content:message});
+  conversation.updatedAt=new Date().toLocaleString();
+  persistConversations();
+  messages.innerHTML+=`<div class="message user">${escapeHTML(message)}</div>`;
+  input.value="";
+  const loading=document.createElement("div");
+  loading.className="message ai";
+  loading.textContent="NEXO is thinking...";
+  messages.appendChild(loading);
+  messages.scrollTop=messages.scrollHeight;
+  try{
+    const reply=await callNexoAI(message);
+    loading.remove();
+    messages.innerHTML+=`<div class="message ai">${escapeHTML(reply)}</div>`;
+    conversation.messages.push({role:"ai",content:reply});
+    conversation.updatedAt=new Date().toLocaleString();
+    persistConversations();
+  }catch(error){
+    loading.textContent="AI response is currently unavailable. Please try again in a moment.";
+    loading.title=String(error.message||error);
+    conversation.messages.push({role:"ai",content:loading.textContent});
+    conversation.updatedAt=new Date().toLocaleString();
+    persistConversations();
+  }
+  messages.scrollTop=messages.scrollHeight;
 }
 
 /* =========================
@@ -1531,12 +1571,29 @@ status.textContent="Testing AI backend...";dot?.classList.remove("ok","bad");
 try{const r=await fetch(BACKEND,{method:"OPTIONS"});if(r.ok||r.status===204){dot?.classList.add("ok");status.textContent="Backend is reachable.";}else{dot?.classList.add("bad");status.textContent="Backend returned HTTP "+r.status+".";}}catch(e){dot?.classList.add("bad");status.textContent="Backend is unreachable from this browser.";}
 }
 
-function generateApp(){
-const prompt=(document.getElementById("appPrompt")?.value||"").trim();const area=document.getElementById("appCode");const frame=document.getElementById("appPreview");if(!area||!frame)return;if(!prompt){alert("Describe the app you want first.");return;}
-const safe=escapeHTML(prompt);
-const code=`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#7c5cff"><title>NEXO App</title><style>body{font-family:Arial,sans-serif;margin:0;background:#08080d;color:#fff}header{padding:24px;background:#151521}main{padding:22px}.card{background:#151521;border:1px solid #303044;border-radius:16px;padding:18px;margin:12px 0}button{background:#7c5cff;color:#fff;border:0;border-radius:10px;padding:12px 16px}input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b11;color:#fff;margin:10px 0}</style></head><body><header><h1>NEXO App</h1><p>Installable web-app prototype</p></header><main><div class="card"><strong>App brief</strong><p>${safe}</p><input placeholder="Try your app..."><button onclick="alert('App prototype is working!')">Test App</button></div></main></body></html>`;
-area.value=code;frame.srcdoc=code;localStorage.setItem("nexo_app_code",code);
+async function generateApp(){
+  const prompt=(document.getElementById("appPrompt")?.value||"").trim();
+  const area=document.getElementById("appCode");
+  const frame=document.getElementById("appPreview");
+  if(!area||!frame)return;
+  if(!prompt){alert("Describe the app you want first.");return;}
+  const old=area.value;
+  area.value="NEXO AI is building your app...";
+  try{
+    const aiPrompt=`You are NEXO App Builder. Build a complete, polished, responsive single-file HTML web app from the user's request below. Return ONLY the complete HTML document, starting with <!doctype html> and ending with </html>. No markdown fences and no explanation. The app must be functional in the browser using vanilla HTML/CSS/JavaScript, have a premium modern UI, responsive mobile layout, working buttons/forms/interactions where appropriate, and use localStorage for simple client-side persistence when useful. Do not use external build tools. User request: ${prompt}`;
+    const reply=await callNexoAI(aiPrompt);
+    const code=extractAIHTML(reply);
+    if(!code.toLowerCase().includes("<html"))throw new Error("AI did not return valid HTML");
+    area.value=code;
+    frame.srcdoc=code;
+    localStorage.setItem("nexo_app_code",code);
+  }catch(error){
+    area.value=old;
+    alert("NEXO AI App Builder could not generate the app. Please try again.");
+    console.error(error);
+  }
 }
+
 function clearAppBuilder(){const a=document.getElementById("appPrompt"),b=document.getElementById("appCode"),f=document.getElementById("appPreview");if(a)a.value="";if(b)b.value="";if(f)f.srcdoc="";localStorage.removeItem("nexo_app_code");}
 
 /* =========================
@@ -1558,147 +1615,28 @@ input.focus();
 }
 
 
-function generateWebsite(){
-
-const input=
-document.getElementById("builderPrompt");
-
-const codeArea=
-document.getElementById("codeArea");
-
-if(!input || !input.value.trim()){
-
-alert("First describe the website you want.");
-
-return;
-
-}
-
-const originalPrompt=input.value.trim();
-
-const prompt=originalPrompt.toLowerCase();
-
-
-let type="business";
-
-
-/* WEBSITE TYPE */
-
-if(
-prompt.includes("restaurant")||
-prompt.includes("food")||
-prompt.includes("cafe")||
-prompt.includes("hotel")||
-prompt.includes("dining")||
-prompt.includes("bakery")||
-prompt.includes("bar")
-){
-
-type="restaurant";
-
-}
-
-else if(
-prompt.includes("portfolio")||
-prompt.includes("video editor")||
-prompt.includes("designer")||
-prompt.includes("photographer")||
-prompt.includes("developer")||
-prompt.includes("freelancer")
-){
-
-type="portfolio";
-
-}
-
-else if(
-prompt.includes("shopping")||
-prompt.includes("shop")||
-prompt.includes("ecommerce")||
-prompt.includes("e-commerce")||
-prompt.includes("store")||
-prompt.includes("products")
-){
-
-type="shopping";
-
-}
-
-
-/* WEBSITE NAME */
-
-let websiteName="NEXO Business";
-
-const namePatterns=[
-
-/called\s+["']([^"']+)["']/i,
-
-/named\s+["']([^"']+)["']/i,
-
-/name\s+(?:is|to|as)\s+["']([^"']+)["']/i,
-
-/(?:called|named)\s+([A-Za-z0-9][A-Za-z0-9 &'-]{2,60})/i
-
-];
-
-
-for(const pattern of namePatterns){
-
-const match=originalPrompt.match(pattern);
-
-if(match){
-
-websiteName=
-match[1]
-.trim()
-.replace(/[.,!?]+$/,"");
-
-break;
-
-}
-
-}
-
-
-/* DEFAULT NAME */
-
-if(
-websiteName==="NEXO Business"
-){
-
-if(type==="restaurant")
-websiteName="Royal Taste Restaurant";
-
-else if(type==="portfolio")
-websiteName="Creative Studio";
-
-else if(type==="shopping")
-websiteName="NEXO Store";
-
-}
-
-
-/* CREATE CUSTOM WEBSITE */
-
-const website=
-createWebsite(
-type,
-websiteName,
-originalPrompt
-);
-
-
-currentWebsite=website;
-
-codeArea.value=website;
-
-refreshPreview();
-
-localStorage.setItem(
-"nexo_website",
-website
-);
-
+async function generateWebsite(){
+  const input=document.getElementById("builderPrompt");
+  const codeArea=document.getElementById("codeArea");
+  if(!input||!codeArea)return;
+  const originalPrompt=input.value.trim();
+  if(!originalPrompt){alert("First describe the website you want.");return;}
+  const old=codeArea.value;
+  codeArea.value="NEXO AI is building your website...";
+  try{
+    const aiPrompt=`You are NEXO AI Website Builder. Create a complete, production-quality, responsive single-file website from the user's request below. Return ONLY the complete HTML document, starting with <!doctype html> and ending with </html>. No markdown fences, no explanation. Use inline CSS and vanilla JavaScript so the file works directly in a browser. Make the design premium and polished, mobile responsive, accessible, and functional. Implement navigation, buttons, forms, menus, cards, sections and interactions requested by the user. If images are requested, use tasteful remote image URLs from Unsplash Source or other public image URLs; never invent local file paths. Do not expose API keys or secrets. User request: ${originalPrompt}`;
+    const reply=await callNexoAI(aiPrompt);
+    const website=extractAIHTML(reply);
+    if(!website.toLowerCase().includes("<html"))throw new Error("AI did not return valid HTML");
+    currentWebsite=website;
+    codeArea.value=website;
+    refreshPreview();
+    localStorage.setItem("nexo_website",website);
+  }catch(error){
+    codeArea.value=old;
+    alert("NEXO AI Website Builder could not generate the website. Please try again.");
+    console.error(error);
+  }
 }
 
 
@@ -2607,289 +2545,32 @@ All rights reserved.
    EDIT WEBSITE
 ========================= */
 
-function editWebsite(){
-
-const codeArea=
-document.getElementById("codeArea");
-
-const editInput=
-document.getElementById("editPrompt");
-
-if(!codeArea || !editInput)return;
-
-let code=codeArea.value;
-
-const instruction=
-editInput.value.trim().toLowerCase();
-
-if(!code){
-
-alert("Generate a website first.");
-
-return;
-
-}
-
-if(!instruction){
-
-alert("Tell NEXO what you want to change.");
-
-return;
-
-}
-
-
-/* BACKGROUND */
-
-if(
-instruction.includes("black background")||
-instruction.includes("dark background")
-){
-
-code=code.replace(
-/body\{[\s\S]*?background:#09090f;/,
-function(match){
-
-return match.replace(
-"background:#09090f",
-"background:#000000"
-);
-
-}
-);
-
-}
-
-
-/* WHITE BACKGROUND */
-
-if(
-instruction.includes("white background")||
-instruction.includes("light background")
-){
-
-code=code.replace(
-"background:#09090f",
-"background:#ffffff"
-);
-
-code=code.replace(
-"color:#f7f7fb",
-"color:#111111"
-);
-
-}
-
-
-/* RED BUTTON */
-
-if(
-instruction.includes("red button")||
-instruction.includes("buttons red")
-){
-
-code=code.replace(
-"linear-gradient(135deg,#765cff,#4d8cff)",
-"linear-gradient(135deg,#ef4444,#b91c1c)"
-);
-
-code=code.replace(
-"#765cff",
-"#ef4444"
-);
-
-}
-
-
-/* BLUE BUTTON */
-
-if(
-instruction.includes("blue button")||
-instruction.includes("buttons blue")
-){
-
-code=code.replace(
-"linear-gradient(135deg,#765cff,#4d8cff)",
-"linear-gradient(135deg,#2563eb,#06b6d4)"
-);
-
-}
-
-
-/* TITLE */
-
-const titleMatch=
-instruction.match(
-/(?:change|rename|set).*(?:title|name).*?(?:to|as)\s+["']?([^"']+)["']?$/i
-);
-
-if(titleMatch){
-
-const newTitle=
-titleMatch[1].trim();
-
-code=code.replace(
-/<title>[\s\S]*?<\/title>/,
-"<title>"+escapeHTML(newTitle)+"</title>"
-);
-
-code=code.replace(
-/<div class="logo">[\s\S]*?<\/div>/,
-'<div class="logo">'+escapeHTML(newTitle)+"</div>"
-);
-
-code=code.replace(
-/<h1>[\s\S]*?<\/h1>/,
-"<h1>"+escapeHTML(newTitle)+"</h1>"
-);
-
-}
-
-
-/* ADD MENU */
-
-if(
-instruction.includes("add menu")
-&&
-!code.includes('id="menu"')
-){
-
-code=code.replace(
-'<section id="contact">',
-`
-
-<section id="menu">
-
-<h2>Our Menu</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>Signature Dish</h3>
-<p>Chef's special selection.</p>
-</div>
-
-<div class="card">
-<h3>Popular Choice</h3>
-<p>A customer favorite.</p>
-</div>
-
-<div class="card">
-<h3>Today's Special</h3>
-<p>Fresh and prepared specially for you.</p>
-</div>
-
-</div>
-
-</section>
-
-<section id="contact">`
-);
-
-}
-
-
-/* ADD SERVICES */
-
-if(
-instruction.includes("add services")
-&&
-!code.includes('id="services"')
-){
-
-code=code.replace(
-'<section id="contact">',
-`
-
-<section id="services">
-
-<h2>Our Services</h2>
-
-<div class="cards">
-
-<div class="card">
-<h3>Professional Service</h3>
-<p>Reliable and modern solutions.</p>
-</div>
-
-<div class="card">
-<h3>Creative Solutions</h3>
-<p>Ideas designed around your needs.</p>
-</div>
-
-<div class="card">
-<h3>Support</h3>
-<p>Helpful support whenever you need it.</p>
-</div>
-
-</div>
-
-</section>
-
-<section id="contact">`
-);
-
-}
-
-
-/* ADD ABOUT */
-
-if(
-instruction.includes("add about")
-&&
-!code.includes('id="about"')
-){
-
-code=code.replace(
-'<section id="contact">',
-`
-
-<section id="about">
-
-<h2>About Us</h2>
-
-<p>
-We are focused on delivering quality,
-creative ideas and excellent experiences.
-</p>
-
-</section>
-
-<section id="contact">`
-);
-
-}
-
-
-/* FOOTER */
-
-if(
-instruction.includes("black footer")
-){
-
-code=code.replace(
-"footer{",
-"footer{background:#000000;"
-);
-
-}
-
-
-/* SAVE */
-
-currentWebsite=code;
-
-codeArea.value=code;
-
-localStorage.setItem(
-"nexo_website",
-code
-);
-
-refreshPreview();
-
-editInput.value="";
-
+async function editWebsite(){
+  const codeArea=document.getElementById("codeArea");
+  const editInput=document.getElementById("editPrompt");
+  if(!codeArea||!editInput)return;
+  const code=codeArea.value.trim();
+  const instruction=editInput.value.trim();
+  if(!code){alert("Generate a website first.");return;}
+  if(!instruction){alert("Tell NEXO what you want to change.");return;}
+  const old=codeArea.value;
+  editInput.value="NEXO AI is applying your changes...";
+  try{
+    const aiPrompt=`You are NEXO AI Website Editor. Modify the existing HTML below according to the user's requested changes. Return ONLY the complete updated HTML document, starting with <!doctype html> and ending with </html>. No markdown fences and no explanation. Preserve everything that was not requested to change. Keep the site responsive and functional. User requested changes: ${instruction}\n\nExisting HTML:\n${code}`;
+    const reply=await callNexoAI(aiPrompt);
+    const updated=extractAIHTML(reply);
+    if(!updated.toLowerCase().includes("<html"))throw new Error("AI did not return valid HTML");
+    currentWebsite=updated;
+    codeArea.value=updated;
+    localStorage.setItem("nexo_website",updated);
+    refreshPreview();
+    editInput.value="";
+  }catch(error){
+    editInput.value="";
+    codeArea.value=old;
+    alert("NEXO AI could not apply the requested changes. Please try again.");
+    console.error(error);
+  }
 }
 
 
