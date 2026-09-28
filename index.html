@@ -578,7 +578,7 @@ button{
 .auth-primary{width:100%;height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#4e8cff);color:#fff;font-size:15px;font-weight:700;margin-top:2px}
 .auth-actions{display:flex;gap:10px;margin-top:8px}.auth-error{color:#ff8585;font-size:13px;min-height:18px;margin:10px 0;text-align:center}.auth-note{font-size:11px!important;color:#666678!important;margin-top:17px!important;margin-bottom:0!important;text-align:center!important}
 .auth-setup{margin-top:14px;padding:10px 12px;border-radius:10px;background:#19151b;border:1px solid #3b2932;color:#c5aeb5;font-size:11px;line-height:1.45;display:none}
-.user-pill{display:flex;align-items:center;gap:9px}.user-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#28223e;color:#b9a9ff;font-weight:700;font-size:12px}
+.user-pill{position:relative;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;padding:6px 8px;border-radius:12px;transition:.18s}.user-pill:hover{background:#171721}.user-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#28223e;color:#b9a9ff;font-weight:700;font-size:12px;flex:0 0 auto}.account-menu{position:absolute;left:0;bottom:48px;min-width:190px;padding:8px;background:#14141d;border:1px solid #303044;border-radius:14px;box-shadow:0 18px 45px rgba(0,0,0,.45);display:none;z-index:10000}.account-menu.open{display:block}.account-menu-name{padding:8px 10px 10px;color:#fff;font-weight:700;font-size:13px;border-bottom:1px solid #292936;margin-bottom:6px}.account-menu-email{display:block;color:#858597;font-size:11px;font-weight:400;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:165px}.account-menu button{width:100%;border:0;background:transparent;color:#ff9b9b;text-align:left;padding:10px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer}.account-menu button:hover{background:#241316}
 .history-item{cursor:pointer;transition:.2s}.history-item:hover{border-color:#5d4bc5;transform:translateY(-1px)}.history-preview{color:#c7c7d3;margin:6px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.history-meta{color:#777788;font-size:12px}
 .history-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.danger{border:1px solid #63343a!important;color:#ff9b9b!important;background:#241316!important}.chat-history-head{display:flex;align-items:center;gap:10px;margin-bottom:15px}
 .app-builder-card{border:1px solid var(--border);background:#111119;border-radius:16px;padding:20px;margin-top:18px}.app-builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.app-builder-grid textarea{width:100%;height:330px;background:#0b0b11;border:1px solid var(--border);border-radius:12px;color:#eee;padding:14px;resize:vertical;outline:none}.app-preview{width:100%;height:330px;border:1px solid var(--border);border-radius:12px;background:white}
@@ -778,9 +778,16 @@ button{
     </nav>
 
     <div class="account">
-      <div class="user-pill">
+      <div class="user-pill" id="accountPill" onclick="toggleAccountMenu(event)" aria-haspopup="menu" aria-expanded="false">
         <span class="user-avatar" id="accountAvatar">N</span>
         <span class="account-label" id="accountLabel">NEXO Account</span>
+        <div class="account-menu" id="accountMenu" role="menu">
+          <div class="account-menu-name">
+            <span id="accountMenuName">NEXO Account</span>
+            <span class="account-menu-email" id="accountMenuEmail"></span>
+          </div>
+          <button type="button" onclick="logoutFromMenu(event)" role="menuitem">Log out</button>
+        </div>
       </div>
     </div>
 
@@ -836,10 +843,44 @@ function ensureConversation(title){
 }
 
 function updateAccountUI(){
-  const label=document.getElementById("accountLabel"),avatar=document.getElementById("accountAvatar");
-  if(label)label.textContent=currentUser?.name||"NEXO Account";
-  if(avatar)avatar.textContent=(currentUser?.name||"N").trim().charAt(0).toUpperCase()||"N";
+  const name=currentUser?.name||"NEXO Account";
+  const email=currentUser?.email||"";
+  const label=document.getElementById("accountLabel");
+  const avatar=document.getElementById("accountAvatar");
+  const menuName=document.getElementById("accountMenuName");
+  const menuEmail=document.getElementById("accountMenuEmail");
+  if(label)label.textContent=name;
+  if(avatar)avatar.textContent=name.trim().charAt(0).toUpperCase()||"N";
+  if(menuName)menuName.textContent=name;
+  if(menuEmail)menuEmail.textContent=email;
 }
+
+function toggleAccountMenu(event){
+  if(event)event.stopPropagation();
+  const menu=document.getElementById("accountMenu");
+  const pill=document.getElementById("accountPill");
+  if(!menu)return;
+  const open=menu.classList.toggle("open");
+  if(pill)pill.setAttribute("aria-expanded",open?"true":"false");
+}
+
+function closeAccountMenu(){
+  const menu=document.getElementById("accountMenu");
+  const pill=document.getElementById("accountPill");
+  if(menu)menu.classList.remove("open");
+  if(pill)pill.setAttribute("aria-expanded","false");
+}
+
+function logoutFromMenu(event){
+  if(event)event.stopPropagation();
+  closeAccountMenu();
+  logout();
+}
+
+document.addEventListener("click",function(event){
+  const pill=document.getElementById("accountPill");
+  if(pill && !pill.contains(event.target))closeAccountMenu();
+});
 
 /* =========================
    FIREBASE AUTH / LOGIN UI
@@ -1007,8 +1048,16 @@ function finishFirebaseUser(user){
 
 function logout(){
   const doLogout=async()=>{
-    try{if(firebaseAuth)await window.__NEXO_FIREBASE.authMod.signOut(firebaseAuth);}catch(e){console.warn(e)}
-    sessionActive=false;localStorage.removeItem("nexo_session");localStorage.removeItem("nexo_user");currentUser=null;renderAuth("login");
+    closeAccountMenu();
+    try{
+      if(firebaseAuth)await window.__NEXO_FIREBASE.authMod.signOut(firebaseAuth);
+    }catch(e){console.warn(e)}
+    sessionActive=false;
+    localStorage.removeItem("nexo_session");
+    localStorage.removeItem("nexo_user");
+    currentUser=null;
+    updateAccountUI();
+    renderAuth("login");
   };
   doLogout();
 }
