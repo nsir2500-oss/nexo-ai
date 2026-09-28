@@ -566,6 +566,25 @@ button{
   display:block;
 }
 
+
+/* NEXO V2 ENHANCEMENTS */
+.auth-overlay{position:fixed;inset:0;z-index:9999;background:rgba(4,4,8,.985);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.auth-card{width:min(430px,100%);background:#111119;border:1px solid #2c2c40;border-radius:24px;padding:30px;box-shadow:0 25px 80px rgba(0,0,0,.65)}
+.auth-brand{font-size:30px;font-weight:800;letter-spacing:1px;text-align:center}.auth-brand span{color:#8065ff}.auth-card h1{font-size:26px;margin:16px 0 8px;text-align:center}.auth-card p{color:#9999aa;line-height:1.5;margin-bottom:20px;text-align:center}
+.auth-social{width:100%;height:48px;border:1px solid #343445;background:#181820;color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:11px;font-size:15px;font-weight:600;margin-bottom:11px;transition:.18s}
+.auth-social:hover{background:#20202a;border-color:#4a4a5d;transform:translateY(-1px)}
+.auth-social svg{width:20px;height:20px;display:block}.auth-divider{display:flex;align-items:center;gap:12px;color:#666678;font-size:12px;margin:18px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#292936;flex:1}
+.auth-input{width:100%;background:#0b0b11;border:1px solid #303044;color:#fff;border-radius:12px;padding:13px 14px;margin-bottom:11px;outline:none}.auth-input:focus{border-color:#7058ff;box-shadow:0 0 0 3px rgba(112,88,255,.10)}
+.auth-primary{width:100%;height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#4e8cff);color:#fff;font-size:15px;font-weight:700;margin-top:2px}
+.auth-actions{display:flex;gap:10px;margin-top:8px}.auth-error{color:#ff8585;font-size:13px;min-height:18px;margin:10px 0;text-align:center}.auth-note{font-size:11px!important;color:#666678!important;margin-top:17px!important;margin-bottom:0!important;text-align:center!important}
+.auth-setup{margin-top:14px;padding:10px 12px;border-radius:10px;background:#19151b;border:1px solid #3b2932;color:#c5aeb5;font-size:11px;line-height:1.45;display:none}
+.user-pill{display:flex;align-items:center;gap:9px}.user-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#28223e;color:#b9a9ff;font-weight:700;font-size:12px}
+.history-item{cursor:pointer;transition:.2s}.history-item:hover{border-color:#5d4bc5;transform:translateY(-1px)}.history-preview{color:#c7c7d3;margin:6px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.history-meta{color:#777788;font-size:12px}
+.history-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.danger{border:1px solid #63343a!important;color:#ff9b9b!important;background:#241316!important}.chat-history-head{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.app-builder-card{border:1px solid var(--border);background:#111119;border-radius:16px;padding:20px;margin-top:18px}.app-builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.app-builder-grid textarea{width:100%;height:330px;background:#0b0b11;border:1px solid var(--border);border-radius:12px;color:#eee;padding:14px;resize:vertical;outline:none}.app-preview{width:100%;height:330px;border:1px solid var(--border);border-radius:12px;background:white}
+.status-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:#aaa}.status-dot{width:8px;height:8px;border-radius:50%;background:#888}.status-dot.ok{background:#4fd18b}.status-dot.bad{background:#ff6767}.small-btn{padding:7px 10px!important;font-size:12px!important}
+@media(max-width:800px){.app-builder-grid{grid-template-columns:1fr}.auth-card{padding:24px}}
+
 /* RESPONSIVE */
 
 @media(max-width:1000px){
@@ -683,6 +702,8 @@ button{
 
 <body>
 
+<div id="authOverlay" class="auth-overlay" style="display:none"></div>
+
 <div class="app">
 
   <aside class="sidebar" aria-label="NEXO navigation">
@@ -733,6 +754,13 @@ button{
         <span class="nav-label">Website Builder</span>
       </button>
 
+      <button onclick="show('appbuilder')" id="nav-appbuilder" aria-label="App Builder">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M10 6h4M10 18h4"/></svg>
+        </span>
+        <span class="nav-label">App Builder</span>
+      </button>
+
       <button onclick="show('files')" id="nav-files" aria-label="Files">
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4z"/><path d="M4 9h16"/></svg>
@@ -750,8 +778,10 @@ button{
     </nav>
 
     <div class="account">
-      <span class="account-dot" aria-hidden="true"></span>
-      <span class="account-label">NEXO Account</span>
+      <div class="user-pill">
+        <span class="user-avatar" id="accountAvatar">N</span>
+        <span class="account-label" id="accountLabel">NEXO Account</span>
+      </div>
     </div>
 
   </aside>
@@ -771,12 +801,207 @@ button{
 <script>
 
 const BACKEND="https://ksiei-ai-backend.onrender.com/chat";
+const NEXO_VERSION="2.0";
 
-let historyData=
-JSON.parse(localStorage.getItem("nexo_history")||"[]");
+let currentUser=JSON.parse(localStorage.getItem("nexo_user")||"null");
+let sessionActive=localStorage.getItem("nexo_session")==="1";
+let conversations=JSON.parse(localStorage.getItem("nexo_conversations")||"[]");
+let activeConversationId=null;
+let currentWebsite=localStorage.getItem("nexo_website")||"";
 
-let currentWebsite=
-localStorage.getItem("nexo_website")||"";
+(function migrateOldHistory(){
+  const old=JSON.parse(localStorage.getItem("nexo_history")||"[]");
+  if(conversations.length===0 && old.length){
+    conversations=old.map((item,i)=>({
+      id:"legacy-"+Date.now()+"-"+i,
+      title:item.message||"NEXO conversation",
+      createdAt:item.time||new Date().toLocaleString(),
+      updatedAt:item.time||new Date().toLocaleString(),
+      messages:[
+        {role:"user",content:item.message||""},
+        {role:"ai",content:item.reply||"AI response unavailable."}
+      ]
+    }));
+    localStorage.setItem("nexo_conversations",JSON.stringify(conversations));
+  }
+})();
+
+function persistConversations(){localStorage.setItem("nexo_conversations",JSON.stringify(conversations));}
+function getConversation(id){return conversations.find(c=>c.id===id)||null;}
+function ensureConversation(title){
+  if(activeConversationId){const existing=getConversation(activeConversationId);if(existing)return existing;}
+  const now=new Date().toLocaleString();
+  const c={id:"chat-"+Date.now()+"-"+Math.random().toString(36).slice(2,7),title:title||"New NEXO Chat",createdAt:now,updatedAt:now,messages:[]};
+  conversations.push(c);activeConversationId=c.id;persistConversations();return c;
+}
+
+function updateAccountUI(){
+  const label=document.getElementById("accountLabel"),avatar=document.getElementById("accountAvatar");
+  if(label)label.textContent=currentUser?.name||"NEXO Account";
+  if(avatar)avatar.textContent=(currentUser?.name||"N").trim().charAt(0).toUpperCase()||"N";
+}
+
+/* =========================
+   FIREBASE AUTH / LOGIN UI
+========================= */
+
+/* Firebase web config. Project/domain are from the existing NEXO Firebase setup.
+   apiKey/appId/etc. must be copied from Firebase Console > Project settings > Web app. */
+const NEXO_FIREBASE_CONFIG = window.NEXO_FIREBASE_CONFIG || {
+  apiKey: "PASTE_FIREBASE_WEB_API_KEY_HERE",
+  authDomain: "ksiei-70248.firebaseapp.com",
+  projectId: "ksiei-70248",
+  storageBucket: "ksiei-70248.firebasestorage.app",
+  messagingSenderId: "PASTE_SENDER_ID_HERE",
+  appId: "PASTE_FIREBASE_WEB_APP_ID_HERE"
+};
+
+let firebaseAuth = null;
+let firebaseReady = false;
+let firebaseLoading = null;
+
+function firebaseConfigured(){
+  return !!NEXO_FIREBASE_CONFIG.apiKey &&
+    !String(NEXO_FIREBASE_CONFIG.apiKey).includes("PASTE_") &&
+    !!NEXO_FIREBASE_CONFIG.appId &&
+    !String(NEXO_FIREBASE_CONFIG.appId).includes("PASTE_");
+}
+
+async function loadFirebaseAuth(){
+  if(firebaseReady) return true;
+  if(firebaseLoading) return firebaseLoading;
+  firebaseLoading=(async()=>{
+    if(!firebaseConfigured()) return false;
+    try{
+      const appMod=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+      const authMod=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
+      const app=appMod.initializeApp(NEXO_FIREBASE_CONFIG);
+      firebaseAuth=authMod.getAuth(app);
+      window.__NEXO_FIREBASE={app,auth:firebaseAuth,authMod};
+      firebaseReady=true;
+      return true;
+    }catch(e){
+      console.error("NEXO Firebase init failed",e);
+      firebaseReady=false;
+      return false;
+    }
+  })();
+  return firebaseLoading;
+}
+
+function googleIcon(){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.71-.06-1.24-.2-1.79H12v3.39h5.36a4.58 4.58 0 0 1-1.99 3.01v2.51h3.23c1.89-1.74 2.75-4.3 2.75-7.12z"/><path fill="#34A853" d="M12 21.99c2.7 0 4.96-.89 6.61-2.41l-3.23-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.81-1.76-5.6-4.12H3.06v2.59A9.99 9.99 0 0 0 12 21.99z"/><path fill="#FBBC05" d="M6.4 13.91a6.01 6.01 0 0 1 0-3.82V7.5H3.06a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 5.97c1.47 0 2.79.51 3.83 1.5l2.87-2.87C16.95 2.98 14.7 2 12 2a10 10 0 0 0-8.94 5.5L6.4 10.09C7.19 7.73 9.4 5.97 12 5.97z"/></svg>`}
+function appleIcon(){return `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c-.02-2.28 1.86-3.38 1.94-3.43-1.07-1.56-2.73-1.77-3.31-1.79-1.4-.15-2.75.84-3.46.84-.73 0-1.81-.83-2.98-.81-1.5.02-2.9.92-3.67 2.31-1.58 2.74-.4 6.77 1.11 8.99.76 1.09 1.65 2.31 2.82 2.27 1.14-.05 1.57-.73 2.95-.73 1.37 0 1.76.73 2.95.7 1.23-.02 2-1.09 2.73-2.19.87-1.25 1.22-2.47 1.24-2.53-.03-.01-2.3-.88-2.32-3.63zM14.76 5.83c.62-.77 1.04-1.82.92-2.88-.89.04-2 .61-2.64 1.35-.57.66-1.07 1.75-.94 2.78 1 .08 2.03-.5 2.66-1.25z"/></svg>`}
+function emailIcon(){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>`}
+
+function renderAuth(mode="login"){
+  const overlay=document.getElementById("authOverlay"); if(!overlay)return;
+  const setup=!firebaseConfigured();
+  overlay.style.display="flex";
+  overlay.innerHTML=`
+  <div class="auth-card">
+    <div class="auth-brand">NEX<span>O</span></div>
+    <h1>${mode==="signup"?"Create your NEXO account":"Welcome back"}</h1>
+    <p>${mode==="signup"?"Sign up to continue to NEXO.":"Log in to continue to your NEXO workspace."}</p>
+
+    <button class="auth-social" onclick="signInWithGoogle()">${googleIcon()}<span>Continue with Google</span></button>
+    <button class="auth-social" onclick="signInWithApple()">${appleIcon()}<span>Continue with Apple</span></button>
+
+    <div class="auth-divider"><span>OR</span></div>
+
+    ${mode==="signup"?`<input class="auth-input" id="authName" placeholder="Full name" autocomplete="name">`:``}
+    <input class="auth-input" id="authEmail" type="email" placeholder="Email address" autocomplete="email">
+    <input class="auth-input" id="authPassword" type="password" placeholder="Password" autocomplete="${mode==="signup"?"new-password":"current-password"}">
+    <div id="authError" class="auth-error"></div>
+    <button class="auth-primary" onclick="submitAuth('${mode}')">${mode==="signup"?"Create account":"Continue with Email"}</button>
+
+    <button class="secondary" style="width:100%;margin-top:11px" onclick="renderAuth('${mode==="signup"?"login":"signup"}')">${mode==="signup"?"Already have an account? Log in":"Create a new account"}</button>
+
+    <div class="auth-setup" id="authSetup" style="display:${setup?"block":"none"}">
+      Firebase Authentication is not connected yet. The Google, Apple and Email buttons are ready, but real sign-in needs the NEXO Firebase Web App configuration.
+    </div>
+    <p class="auth-note">Secure authentication • Google • Apple • Email</p>
+  </div>`;
+}
+
+async function authError(message){
+  const err=document.getElementById("authError");
+  if(err)err.textContent=message||"Something went wrong. Please try again.";
+}
+
+async function signInWithGoogle(){
+  if(!await loadFirebaseAuth()) return authError("Firebase authentication is not connected yet.");
+  try{
+    const {GoogleAuthProvider,signInWithPopup}=window.__NEXO_FIREBASE.authMod;
+    const result=await signInWithPopup(firebaseAuth,new GoogleAuthProvider());
+    finishFirebaseUser(result.user);
+  }catch(e){console.error(e);authError(firebaseAuthError(e));}
+}
+
+async function signInWithApple(){
+  if(!await loadFirebaseAuth()) return authError("Firebase authentication is not connected yet.");
+  try{
+    const {OAuthProvider,signInWithPopup}=window.__NEXO_FIREBASE.authMod;
+    const provider=new OAuthProvider("apple.com");
+    const result=await signInWithPopup(firebaseAuth,provider);
+    finishFirebaseUser(result.user);
+  }catch(e){console.error(e);authError(firebaseAuthError(e));}
+}
+
+async function submitAuth(mode){
+  if(!await loadFirebaseAuth()) return authError("Firebase authentication is not connected yet. Add the Firebase Web App config first.");
+  const email=(document.getElementById("authEmail")?.value||"").trim();
+  const password=document.getElementById("authPassword")?.value||"";
+  if(!email||!password)return authError("Email and password are required.");
+  if(password.length<6)return authError("Password must be at least 6 characters.");
+  try{
+    const {createUserWithEmailAndPassword,signInWithEmailAndPassword,updateProfile}=window.__NEXO_FIREBASE.authMod;
+    let result;
+    if(mode==="signup"){
+      result=await createUserWithEmailAndPassword(firebaseAuth,email,password);
+      const name=(document.getElementById("authName")?.value||email.split("@")[0]).trim();
+      if(name)await updateProfile(result.user,{displayName:name});
+    }else{
+      result=await signInWithEmailAndPassword(firebaseAuth,email,password);
+    }
+    finishFirebaseUser(result.user);
+  }catch(e){console.error(e);authError(firebaseAuthError(e));}
+}
+
+function firebaseAuthError(e){
+  const c=e?.code||"";
+  const map={
+    "auth/invalid-credential":"Email or password is incorrect.",
+    "auth/invalid-email":"Please enter a valid email address.",
+    "auth/email-already-in-use":"This email is already registered. Please log in.",
+    "auth/weak-password":"Password should be at least 6 characters.",
+    "auth/popup-closed-by-user":"Sign-in was cancelled.",
+    "auth/popup-blocked":"Your browser blocked the sign-in popup. Please allow popups for NEXO.",
+    "auth/operation-not-allowed":"This sign-in method is not enabled in Firebase Authentication.",
+    "auth/unauthorized-domain":"This website domain is not authorized in Firebase Authentication."
+  };
+  return map[c]||e?.message||"Authentication failed.";
+}
+
+function finishFirebaseUser(user){
+  if(!user)return;
+  currentUser={name:user.displayName||user.email?.split("@")[0]||"NEXO User",email:user.email||"",uid:user.uid,photoURL:user.photoURL||""};
+  sessionActive=true;
+  localStorage.setItem("nexo_user",JSON.stringify(currentUser));
+  localStorage.setItem("nexo_session","1");
+  document.getElementById("authOverlay").style.display="none";
+  updateAccountUI();
+  show("home");
+}
+
+function logout(){
+  const doLogout=async()=>{
+    try{if(firebaseAuth)await window.__NEXO_FIREBASE.authMod.signOut(firebaseAuth);}catch(e){console.warn(e)}
+    sessionActive=false;localStorage.removeItem("nexo_session");localStorage.removeItem("nexo_user");currentUser=null;renderAuth("login");
+  };
+  doLogout();
+}
+function resetLocalAccount(){logout();}
+
 
 
 /* =========================
@@ -828,6 +1053,11 @@ websites, apps, projects and creative work.
 <p>Describe a website and NEXO creates editable HTML with live preview.</p>
 </div>
 
+<div class="feature-card" onclick="show('appbuilder')">
+<h3>App Builder</h3>
+<p>Create an installable web-app/PWA prototype from a simple prompt.</p>
+</div>
+
 <div class="feature-card" onclick="show('projects')">
 <h3>Projects</h3>
 <p>Keep your work organized inside your NEXO workspace.</p>
@@ -848,41 +1078,23 @@ return;
 
 if(screen==="chat"){
 
-title.textContent="AI Chat";
+title.textContent=activeConversationId?((getConversation(activeConversationId)?.title)||"AI Chat"):"AI Chat";
 
 content.innerHTML=`
-
 <div class="chat-wrap">
-
-<div class="chat-messages" id="chatMessages">
-
-<div class="message ai">
-Hi! I'm NEXO. What would you like to create or solve?
+<div class="chat-history-head">
+${activeConversationId?`<button class="secondary" onclick="show('history')">← History</button>`:``}
 </div>
-
-</div>
-
+<div class="chat-messages" id="chatMessages"></div>
 <div class="composer">
-
-<textarea
-id="chatInput"
-placeholder="Message NEXO..."
-onkeydown="enterKey(event)"
-></textarea>
-
-<button class="send-btn" onclick="sendMessage()">
-Send
-</button>
-
+<textarea id="chatInput" placeholder="Message NEXO..." onkeydown="enterKey(event)"></textarea>
+<button class="send-btn" onclick="sendMessage()">Send</button>
 </div>
-
-</div>
-
-`;
-
+</div>`;
+const c=activeConversationId?getConversation(activeConversationId):null;
+if(c)renderConversation(c);else document.getElementById("chatMessages").innerHTML=`<div class="message ai">Hi! I'm NEXO. What would you like to create or solve?</div>`;
 return;
 }
-
 
 if(screen==="builder"){
 
@@ -1027,6 +1239,30 @@ return;
 }
 
 
+if(screen==="appbuilder"){
+
+title.textContent="App Builder";
+
+content.innerHTML=`
+<div class="page">
+<h1>App Builder</h1>
+<p>Create an installable web-app/PWA prototype. This test build generates the app shell locally.</p>
+<div class="app-builder-card">
+<textarea id="appPrompt" style="width:100%;height:150px;background:#0b0b11;border:1px solid var(--border);border-radius:12px;color:#eee;padding:14px;resize:vertical;outline:none" placeholder="Example: Create a modern task manager app with tasks, priority, search and dark mode."></textarea>
+<div class="history-toolbar">
+<button class="primary" onclick="generateApp()">Generate App</button>
+<button class="secondary" onclick="clearAppBuilder()">Clear</button>
+</div>
+<div class="app-builder-grid">
+<textarea id="appCode" placeholder="Generated app code will appear here..."></textarea>
+<iframe id="appPreview" class="app-preview"></iframe>
+</div>
+</div>
+</div>`;
+return;
+}
+
+
 if(screen==="projects"){
 
 title.textContent="Projects";
@@ -1042,19 +1278,15 @@ Your NEXO projects will appear here.
 </p>
 
 <div class="settings-card">
-
 <h3>Website Project</h3>
+<p>Use Website Builder to create and edit your websites.</p><br>
+<button class="primary" onclick="show('builder')">Open Website Builder</button>
+</div>
 
-<p>
-Use Website Builder to create and edit your websites.
-</p>
-
-<br>
-
-<button class="primary" onclick="show('builder')">
-Open Website Builder
-</button>
-
+<div class="settings-card">
+<h3>App Project</h3>
+<p>Create an installable PWA-style app prototype.</p><br>
+<button class="primary" onclick="show('appbuilder')">Open App Builder</button>
 </div>
 
 </div>
@@ -1068,58 +1300,44 @@ return;
 if(screen==="history"){
 
 title.textContent="History";
-
 let html=`
-
 <div class="page">
-
 <h1>History</h1>
-
-<p style="margin-bottom:20px">
-Your recent NEXO conversations.
-</p>
-
-`;
-
-if(historyData.length===0){
-
-html+=`
-
-<div class="settings-card">
-No conversations yet.
-</div>
-
-`;
-
+<p>Your recent NEXO conversations. Tap any conversation to reopen the full chat.</p>
+<div class="history-toolbar">
+<button class="secondary" onclick="newChat()">+ New Chat</button>
+<button class="secondary danger" onclick="clearHistory()">Clear History</button>
+</div>`;
+if(conversations.length===0){
+html+=`<div class="settings-card">No conversations yet.</div>`;
 }else{
-
-historyData.slice().reverse().forEach(item=>{
-
-html+=`
-
-<div class="history-item">
-
-<strong>${escapeHTML(item.message)}</strong>
-
-<div>${escapeHTML(item.reply)}</div>
-
-<small>${escapeHTML(item.time)}</small>
-
-</div>
-
-`;
-
+conversations.slice().reverse().forEach(item=>{
+const last=item.messages?.[item.messages.length-1];
+const preview=last?.content||"Empty conversation";
+html+=`<div class="history-item" onclick="openConversation('${item.id}')">
+<strong>${escapeHTML(item.title||"NEXO conversation")}</strong>
+<div class="history-preview">${escapeHTML(preview)}</div>
+<div class="history-meta">${escapeHTML(item.updatedAt||item.createdAt||"")} · ${item.messages?.length||0} messages</div>
+</div>`;
 });
-
+}
+html+=`</div>`;content.innerHTML=html;return;
 }
 
-html+=`</div>`;
-
-content.innerHTML=html;
-
-return;
+function clearHistory(){
+if(!confirm("Clear all NEXO conversation history from this browser?"))return;
+conversations=[];activeConversationId=null;persistConversations();show("history");
 }
 
+function openConversation(id){
+const c=getConversation(id);if(!c)return;activeConversationId=id;show("chat");renderConversation(c);
+}
+
+function renderConversation(c){
+const messages=document.getElementById("chatMessages");if(!messages)return;
+messages.innerHTML=c.messages.map(m=>`<div class="message ${m.role==='user'?'user':'ai'}">${escapeHTML(m.content)}</div>`).join("")||`<div class="message ai">Conversation opened. Continue chatting.</div>`;
+messages.scrollTop=messages.scrollHeight;
+}
 
 if(screen==="files"){
 
@@ -1150,83 +1368,47 @@ return;
 if(screen==="settings"){
 
 title.textContent="Settings";
-
 content.innerHTML=`
-
 <div class="page">
-
 <h1>Settings</h1>
-
-<p>
-Manage your NEXO workspace.
-</p>
+<p>Manage your NEXO website workspace.</p>
 
 <div class="settings-card">
-
-<h3>Appearance</h3>
-
-<p>Dark mode is currently enabled.</p>
-
+<h3>Account</h3>
+<p>Signed in as <strong>${escapeHTML(currentUser?.email||"Unknown")}</strong></p>
+<br><button class="secondary danger" onclick="logout()">Log out</button>
 </div>
 
 <div class="settings-card">
-
-<h3>Website Builder</h3>
-
-<p>
-Generated websites are saved locally in this browser.
-</p>
-
+<h3>Appearance</h3><p>Dark mode is currently enabled.</p>
 </div>
 
 <div class="settings-card">
+<h3>Website Builder</h3><p>Generated websites are saved locally in this browser.</p>
+</div>
 
+<div class="settings-card">
 <h3>AI Backend</h3>
-
-<p>
-NEXO AI backend connection is configured.
-</p>
-
+<p>Current endpoint: <code>${escapeHTML(BACKEND)}</code></p>
+<div class="status-row"><span id="backendDot" class="status-dot"></span><span id="backendStatus">Checking connection...</span></div>
+<br><button class="secondary" onclick="testBackend()">Test AI Connection</button>
 </div>
 
+<div class="settings-card">
+<h3>Security</h3><p>This test build blocks the NEXO interface until login. It is browser-local authentication, not server-side security.</p>
 </div>
-
-`;
-
-return;
+</div>`;
+setTimeout(testBackend,50);return;
 }
-
 }
-
 
 /* =========================
    NEW CHAT
 ========================= */
 
 function newChat(){
-
-show("chat");
-
-setTimeout(()=>{
-
-const messages=document.getElementById("chatMessages");
-
-if(messages){
-
-messages.innerHTML=`
-
-<div class="message ai">
-New chat started. What are we building today?
-</div>
-
-`;
-
+activeConversationId=null;show("chat");
 }
-
-},50);
-
-}
-
 
 /* =========================
    CHAT
@@ -1246,112 +1428,55 @@ sendMessage();
 
 
 async function sendMessage(){
-
-const input=document.getElementById("chatInput");
-const messages=document.getElementById("chatMessages");
-
-if(!input || !messages)return;
-
-const message=input.value.trim();
-
-if(!message)return;
-
-
-messages.innerHTML+=`
-
-<div class="message user">
-${escapeHTML(message)}
-</div>
-
-`;
-
-input.value="";
-
-
-const loading=document.createElement("div");
-
-loading.className="message ai";
-
-loading.textContent="NEXO is thinking...";
-
-messages.appendChild(loading);
-
-
+const input=document.getElementById("chatInput");const messages=document.getElementById("chatMessages");if(!input||!messages)return;
+const message=input.value.trim();if(!message)return;
+const conversation=ensureConversation(message.slice(0,60));
+if(conversation.messages.length===0){conversation.title=message.slice(0,60);}
+conversation.messages.push({role:"user",content:message});conversation.updatedAt=new Date().toLocaleString();persistConversations();
+messages.innerHTML+=`<div class="message user">${escapeHTML(message)}</div>`;input.value="";
+const loading=document.createElement("div");loading.className="message ai";loading.textContent="NEXO is thinking...";messages.appendChild(loading);messages.scrollTop=messages.scrollHeight;
+let lastError="";
 try{
-
-const response=await fetch(BACKEND,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-message:message
-})
-
-});
-
-
-const data=await response.json();
-
-loading.remove();
-
-const reply=data.reply||"AI response unavailable.";
-
-messages.innerHTML+=`
-
-<div class="message ai">
-${escapeHTML(reply)}
-</div>
-
-`;
-
-saveHistory(message,reply);
-
+  let response=null;
+  for(let attempt=1;attempt<=3;attempt++){
+    try{response=await fetch(BACKEND,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:message})});if(response.ok)break;lastError="HTTP "+response.status;}catch(e){lastError=e.message||"Network error";}
+    if(attempt<3)await new Promise(r=>setTimeout(r,1200*attempt));
+  }
+  if(!response||!response.ok)throw new Error(lastError||"Backend unavailable");
+  const data=await response.json();
+  const reply=data.reply||data.message||data.response;
+  if(!reply)throw new Error("Empty AI response");
+  loading.remove();messages.innerHTML+=`<div class="message ai">${escapeHTML(reply)}</div>`;
+  conversation.messages.push({role:"ai",content:reply});conversation.updatedAt=new Date().toLocaleString();persistConversations();
 }catch(error){
-
-loading.textContent=
-"AI temporarily unavailable. Website Builder can still be used.";
-
+  loading.textContent="AI response is currently unavailable. The chat backend is not responding.";
+  loading.title=String(error.message||error);
+  conversation.messages.push({role:"ai",content:"AI response is currently unavailable. The chat backend is not responding."});conversation.updatedAt=new Date().toLocaleString();persistConversations();
 }
-
 messages.scrollTop=messages.scrollHeight;
-
 }
-
 
 /* =========================
    HISTORY
 ========================= */
 
 function saveHistory(message,reply){
-
-historyData.push({
-
-message:message,
-
-reply:reply,
-
-time:new Date().toLocaleString()
-
-});
-
-if(historyData.length>50){
-
-historyData=
-historyData.slice(-50);
-
+const c=ensureConversation(message.slice(0,60));c.messages.push({role:"user",content:message},{role:"ai",content:reply});c.updatedAt=new Date().toLocaleString();persistConversations();
 }
 
-localStorage.setItem(
-"nexo_history",
-JSON.stringify(historyData)
-);
-
+async function testBackend(){
+const dot=document.getElementById("backendDot"),status=document.getElementById("backendStatus");if(!status)return;
+status.textContent="Testing AI backend...";dot?.classList.remove("ok","bad");
+try{const r=await fetch(BACKEND,{method:"OPTIONS"});if(r.ok||r.status===204){dot?.classList.add("ok");status.textContent="Backend is reachable.";}else{dot?.classList.add("bad");status.textContent="Backend returned HTTP "+r.status+".";}}catch(e){dot?.classList.add("bad");status.textContent="Backend is unreachable from this browser.";}
 }
 
+function generateApp(){
+const prompt=(document.getElementById("appPrompt")?.value||"").trim();const area=document.getElementById("appCode");const frame=document.getElementById("appPreview");if(!area||!frame)return;if(!prompt){alert("Describe the app you want first.");return;}
+const safe=escapeHTML(prompt);
+const code=`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#7c5cff"><title>NEXO App</title><style>body{font-family:Arial,sans-serif;margin:0;background:#08080d;color:#fff}header{padding:24px;background:#151521}main{padding:22px}.card{background:#151521;border:1px solid #303044;border-radius:16px;padding:18px;margin:12px 0}button{background:#7c5cff;color:#fff;border:0;border-radius:10px;padding:12px 16px}input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #333;background:#0b0b11;color:#fff;margin:10px 0}</style></head><body><header><h1>NEXO App</h1><p>Installable web-app prototype</p></header><main><div class="card"><strong>App brief</strong><p>${safe}</p><input placeholder="Try your app..."><button onclick="alert('App prototype is working!')">Test App</button></div></main></body></html>`;
+area.value=code;frame.srcdoc=code;localStorage.setItem("nexo_app_code",code);
+}
+function clearAppBuilder(){const a=document.getElementById("appPrompt"),b=document.getElementById("appCode"),f=document.getElementById("appPreview");if(a)a.value="";if(b)b.value="";if(f)f.srcdoc="";localStorage.removeItem("nexo_app_code");}
 
 /* =========================
    WEBSITE BUILDER
@@ -2862,7 +2987,13 @@ return String(value)
    START
 ========================= */
 
-show("home");
+updateAccountUI();
+if(sessionActive && currentUser){
+  document.getElementById("authOverlay").style.display="none";
+  show("home");
+}else{
+  renderAuth("login");
+}
 
 </script>
 
