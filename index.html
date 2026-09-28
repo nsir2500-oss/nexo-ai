@@ -877,7 +877,15 @@ async function loadFirebaseAuth(){
       const appMod=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
       const authMod=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js");
       const app=appMod.initializeApp(NEXO_FIREBASE_CONFIG);
-      firebaseAuth=authMod.getAuth(app);
+      try{
+        firebaseAuth=authMod.initializeAuth(app,{
+          persistence:[authMod.indexedDBLocalPersistence,authMod.browserLocalPersistence,authMod.browserSessionPersistence],
+          popupRedirectResolver:authMod.browserPopupRedirectResolver
+        });
+      }catch(initError){
+        console.warn("NEXO initializeAuth fallback",initError);
+        firebaseAuth=authMod.getAuth(app);
+      }
       window.__NEXO_FIREBASE={app,auth:firebaseAuth,authMod};
       firebaseReady=true;
       return true;
@@ -932,8 +940,11 @@ async function authError(message){
 async function signInWithGoogle(){
   if(!await loadFirebaseAuth()) return authError("Firebase authentication is not connected yet.");
   try{
-    const {GoogleAuthProvider,signInWithPopup}=window.__NEXO_FIREBASE.authMod;
-    const result=await signInWithPopup(firebaseAuth,new GoogleAuthProvider());
+    const {GoogleAuthProvider,signInWithPopup,setPersistence,browserLocalPersistence,browserPopupRedirectResolver}=window.__NEXO_FIREBASE.authMod;
+    try{await setPersistence(firebaseAuth,browserLocalPersistence);}catch(persistenceError){console.warn("NEXO persistence setup",persistenceError);}
+    const provider=new GoogleAuthProvider();
+    provider.setCustomParameters({prompt:"select_account"});
+    const result=await signInWithPopup(firebaseAuth,provider,browserPopupRedirectResolver);
     finishFirebaseUser(result.user);
   }catch(e){console.error(e);authError(firebaseAuthError(e));}
 }
@@ -2997,4 +3008,5 @@ if(sessionActive && currentUser){
 }
 
 </script>
+
 </body>
