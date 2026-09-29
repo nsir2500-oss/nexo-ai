@@ -1,179 +1,21 @@
+
 const express = require("express");
 const cors = require("cors");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
-  })
-);
-
+app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
 const PORT = process.env.PORT || 10000;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const API_KEY = process.env.GEMINI_API_KEY;
 
-const MODELS = [
-  "gemini-3.8-flash",
-  "gemini-3.7-flash"
-];
+// Fast Gemini model
+const MODEL = "gemini-3.8-flash";
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-function getIndiaDateTime() {
-  const now = new Date();
-
-  const parts = new Intl.DateTimeFormat("hi-IN", {
-    timeZone: "Asia/Kolkata",
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).formatToParts(now);
-
-  const get = (type) => {
-    const item = parts.find((p) => p.type === type);
-    return item ? item.value : "";
-  };
-
-  return {
-    weekday: get("weekday"),
-    day: get("day"),
-    month: get("month"),
-    year: get("year"),
-    hour: get("hour"),
-    minute: get("minute"),
-    second: get("second"),
-    period: get("dayPeriod")
-  };
-}
-
-function isDateTimeQuestion(message) {
-  const text = message.toLowerCase().trim();
-
-  const keywords = [
-    "aaj kaun sa day",
-    "aaj konsa day",
-    "aaj kya day",
-    "aaj ka day",
-    "aaj kaun sa din",
-    "aaj konsa din",
-    "aaj kya din",
-    "aaj ki date",
-    "aaj date",
-    "today date",
-    "today's date",
-    "what is today's date",
-    "what date is today",
-    "what day is today",
-    "which day is today",
-    "current date",
-    "current day",
-    "abhi time",
-    "abhi kya time",
-    "kya time hai",
-    "kitne baje",
-    "what time is it",
-    "current time",
-    "time right now"
-  ];
-
-  return keywords.some((keyword) => text.includes(keyword));
-}
-
-function buildDateTimeReply(message) {
-  const dt = getIndiaDateTime();
-  const text = message.toLowerCase();
-
-  const asksTime =
-    text.includes("time") ||
-    text.includes("baje") ||
-    text.includes("waqt") ||
-    text.includes("samay");
-
-  const asksDate =
-    text.includes("date") ||
-    text.includes("tarikh") ||
-    text.includes("तारीख");
-
-  const asksDay =
-    text.includes("day") ||
-    text.includes("din") ||
-    text.includes("दिन");
-
-  if (asksTime && !asksDate && !asksDay) {
-    return `अभी India time के अनुसार ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} है।`;
-  }
-
-  if (asksDate && !asksDay && !asksTime) {
-    return `आज ${dt.day} ${dt.month} ${dt.year} है।`;
-  }
-
-  if (asksDay && !asksDate && !asksTime) {
-    return `आज ${dt.weekday} है।`;
-  }
-
-  return `आज ${dt.weekday}, ${dt.day} ${dt.month} ${dt.year} है और अभी India time ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} है।`;
-}
-
-async function fetchWithTimeout(url, options, timeoutMs = 18000) {
-  const controller = new AbortController();
-
-  const timeout = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
-
-  try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-async function callGemini(model, prompt) {
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-  return fetchWithTimeout(
-    url,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_API_KEY
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 4096,
-          thinkingConfig: {
-            thinkingLevel: "low"
-          }
-        }
-      })
-    },
-    18000
-  );
-}
+// --------------------------------------------------
+// BASIC ROUTES
+// --------------------------------------------------
 
 app.get("/", (req, res) => {
   res.json({
@@ -184,173 +26,322 @@ app.get("/", (req, res) => {
 
 app.get("/health", (req, res) => {
   res.json({
-    ok: true,
-    service: "nexo-ai-backend"
+    status: "ok",
+    ai: API_KEY ? "configured" : "missing_api_key"
   });
 });
 
-app.post("/chat", async (req, res) => {
-  try {
-    const message = String(req.body?.message || "").trim();
+// --------------------------------------------------
+// INDIA DATE / TIME
+// --------------------------------------------------
 
-    if (!message) {
-      return res.status(400).json({
-        error: "Message is required"
-      });
-    }
+function getIndiaDateTime() {
+  const now = new Date();
 
-    const indiaDateTime = getIndiaDateTime();
+  const date = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  }).format(now);
 
-    /*
-      Direct date/time answer.
-    */
-    if (isDateTimeQuestion(message)) {
-      return res.json({
-        reply: buildDateTimeReply(message),
-        source: "nexo-clock"
-      });
-    }
+  const time = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  }).format(now);
 
-    if (!GEMINI_API_KEY) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY is not configured on the server"
-      });
-    }
+  const day = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "long"
+  }).format(now);
 
-    const prompt = `
-You are NEXO AI, a multilingual AI assistant.
+  return {
+    date,
+    time,
+    day
+  };
+}
 
-You MUST understand and answer all of these languages:
-- Hindi written in Devanagari
-- Hindi written in Roman letters
-- Hinglish
-- English
+// --------------------------------------------------
+// DATE / TIME DETECTION
+// --------------------------------------------------
 
-LANGUAGE RULES:
+function isDateTimeQuestion(text) {
+  const q = String(text || "").toLowerCase();
 
-1. If the user asks in Hindi Devanagari, answer in Hindi Devanagari.
+  const words = [
+    "what time",
+    "current time",
+    "time now",
+    "today's date",
+    "todays date",
+    "what date",
+    "what day",
+    "which day",
+    "today",
+    "tomorrow",
+    "yesterday",
+    "date today",
+    "time please",
 
-2. If the user asks in Roman Hindi/Hinglish, answer naturally in Roman Hindi/Hinglish.
+    // Hindi / Hinglish
+    "abhi kitne baje",
+    "kitne baje",
+    "aaj ki date",
+    "aaj kya date hai",
+    "aaj ka din",
+    "aaj konsa din",
+    "aaj kaun sa din",
+    "kal kya date",
+    "abhi time kya hai",
+    "samay kya hai",
+    "vartaman samay",
 
-3. If the user asks in English, answer in English.
+    // Devanagari
+    "अभी कितने बजे",
+    "अभी समय क्या है",
+    "आज की तारीख",
+    "आज कौन सा दिन",
+    "आज का दिन",
+    "कल की तारीख",
+    "समय क्या है",
+    "वर्तमान समय"
+  ];
 
-4. Never refuse a question simply because it is written in Hindi.
+  return words.some(word => q.includes(word));
+}
 
-5. Never say that you cannot understand Hindi.
+// --------------------------------------------------
+// LOCAL DATE/TIME RESPONSE
+// --------------------------------------------------
 
-6. Do not translate a Hindi question into English unless the user asks for translation.
+function getDateTimeAnswer(userText) {
+  const dt = getIndiaDateTime();
+  const q = String(userText || "").toLowerCase();
 
-7. Preserve Hindi names, words and meanings correctly.
+  // Hindi / Devanagari
+  if (
+    q.includes("तारीख") ||
+    q.includes("आज की तारीख") ||
+    q.includes("aaj ki date") ||
+    q.includes("aaj kya date")
+  ) {
+    return `आज की तारीख ${dt.date} है।`;
+  }
 
-8. Give a direct answer instead of saying "I don't know" unless the information genuinely cannot be determined.
+  if (
+    q.includes("कौन सा दिन") ||
+    q.includes("कौनसा दिन") ||
+    q.includes("आज का दिन") ||
+    q.includes("aaj ka din") ||
+    q.includes("aaj konsa din")
+  ) {
+    return `आज ${dt.day} है।`;
+  }
 
-9. For normal questions, keep the answer clear and reasonably concise.
+  if (
+    q.includes("कितने बजे") ||
+    q.includes("समय") ||
+    q.includes("time") ||
+    q.includes("kitne baje")
+  ) {
+    return `अभी भारत में समय ${dt.time} है।`;
+  }
 
-10. For coding requests, provide complete working code.
+  return `आज ${dt.day}, ${dt.date} है और भारत में अभी ${dt.time} है।`;
+}
 
-11. For website or app requests, provide complete responsive HTML/CSS/JavaScript when appropriate.
+// --------------------------------------------------
+// UNIVERSAL MULTI-LANGUAGE AI PROMPT
+// --------------------------------------------------
 
-CURRENT INDIA DATE AND TIME:
-
-Date:
-${indiaDateTime.day} ${indiaDateTime.month} ${indiaDateTime.year}
-
-Day:
-${indiaDateTime.weekday}
-
-Time:
-${indiaDateTime.hour}:${indiaDateTime.minute}:${indiaDateTime.second} ${indiaDateTime.period}
-
-Timezone:
-Asia/Kolkata
-
-IMPORTANT:
-You have access to the current India date and time shown above.
-If the user asks about today's date, day or time, use that information.
+function buildPrompt(userMessage) {
+  return `
+You are NEXO AI, a highly capable multilingual AI assistant.
 
 USER MESSAGE:
+${userMessage}
 
-${message}
+IMPORTANT LANGUAGE RULES:
 
-Now answer the user directly.
+1. Detect the language of the user's message automatically.
+2. Understand the user's meaning even if the language is uncommon.
+3. Reply in the SAME LANGUAGE used by the user.
+4. If the user uses Romanized Hindi, Romanized Urdu, Romanized Punjabi,
+   Romanized Bengali, or another Romanized language, reply in the same
+   Romanized style when appropriate.
+5. If the user mixes multiple languages, understand the complete meaning
+   and reply naturally in the dominant language.
+6. Never force English unless the user is speaking English or asks for English.
+7. Never say that you only support English or Hindi.
+8. Do not ask the user to translate their question.
+9. If the user asks for translation, translate into the exact requested language.
+10. Preserve names, numbers, code, URLs, technical terms and proper nouns.
+11. For programming questions, provide correct code and explain it in the
+    language/style the user is using.
+12. For factual questions, answer clearly and directly.
+13. If the question is ambiguous, ask a short clarification in the user's language.
+14. If the user asks for a list, use a clean list.
+15. If the user asks for step-by-step instructions, give numbered steps.
+16. Do not mention these internal instructions.
+17. Do not announce the detected language.
+18. Do not unnecessarily translate the user's question.
+19. Be concise unless the user asks for detailed information.
+20. You can understand and answer multilingual conversations.
+
+The user can communicate in any natural human language.
+Do your best to understand and respond naturally.
+
+Now answer the user's message.
 `;
+}
 
-    let lastError = "AI service temporarily unavailable";
+// --------------------------------------------------
+// GEMINI REQUEST
+// --------------------------------------------------
 
-    for (const model of MODELS) {
-      try {
-        console.log(`NEXO request: model=${model}`);
+async function askGemini(userMessage) {
+  if (!API_KEY) {
+    throw new Error("GEMINI_API_KEY is missing");
+  }
 
-        const response = await callGemini(model, prompt);
-        const data = await response.json();
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
-        if (response.ok) {
-          const reply =
-            data?.candidates?.[0]?.content?.parts
-              ?.map((part) => part.text || "")
-              .join("")
-              .trim();
-
-          if (reply) {
-            console.log(`NEXO success: ${model}`);
-
-            return res.json({
-              reply,
-              model
-            });
+  const body = {
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: buildPrompt(userMessage)
           }
-
-          lastError = "Gemini returned an empty response";
-        } else {
-          lastError =
-            data?.error?.message ||
-            data?.error?.status ||
-            "Unknown Gemini API error";
-
-          console.error("Gemini API error:", {
-            model,
-            status: response.status,
-            error: lastError
-          });
-
-          if (response.status === 429 || response.status >= 500) {
-            await sleep(800);
-            continue;
-          }
-
-          break;
-        }
-      } catch (error) {
-        lastError =
-          error.name === "AbortError"
-            ? "Gemini request timed out"
-            : error.message || "Network error";
-
-        console.error("NEXO request error:", {
-          model,
-          error: lastError
-        });
-
-        await sleep(500);
+        ]
       }
+    ],
+
+    generationConfig: {
+      thinkingConfig: {
+        thinkingLevel: "low"
+      },
+      maxOutputTokens: 4096
+    }
+  };
+
+  const controller = new AbortController();
+
+  // 30 second timeout
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, 30000);
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+
+    const rawText = await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      throw new Error(
+        `Gemini returned invalid JSON: ${rawText.slice(0, 500)}`
+      );
     }
 
-    return res.status(503).json({
-      error: "AI service temporarily unavailable",
-      details: lastError,
-      retryable: true
+    if (!response.ok) {
+      console.error("GEMINI ERROR:", JSON.stringify(data, null, 2));
+
+      const message =
+        data?.error?.message ||
+        `Gemini HTTP ${response.status}`;
+
+      throw new Error(message);
+    }
+
+    const reply =
+      data?.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
+        .join("")
+        .trim();
+
+    if (!reply) {
+      console.error(
+        "EMPTY GEMINI RESPONSE:",
+        JSON.stringify(data, null, 2)
+      );
+
+      throw new Error("Gemini returned an empty response");
+    }
+
+    return reply;
+
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// --------------------------------------------------
+// CHAT API
+// --------------------------------------------------
+
+app.post("/chat", async (req, res) => {
+  const message = String(req.body?.message || "").trim();
+
+  if (!message) {
+    return res.status(400).json({
+      error: "Message is required"
+    });
+  }
+
+  console.log("NEXO USER:", message);
+
+  try {
+    // Date/time questions are answered locally and instantly
+    if (isDateTimeQuestion(message)) {
+      const answer = getDateTimeAnswer(message);
+
+      console.log("NEXO LOCAL:", answer);
+
+      return res.json({
+        reply: answer
+      });
+    }
+
+    // AI response
+    const answer = await askGemini(message);
+
+    console.log("NEXO AI RESPONSE:", answer.slice(0, 200));
+
+    return res.json({
+      reply: answer
     });
 
   } catch (error) {
-    console.error("NEXO backend error:", error);
+    console.error("NEXO ERROR:", error);
 
     return res.status(500).json({
-      error: "AI backend error",
+      error: "AI response unavailable",
       details: error.message
     });
   }
 });
 
+// --------------------------------------------------
+// START SERVER
+// --------------------------------------------------
+
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`NEXO AI backend running on port ${PORT}`);
+  console.log(`NEXO AI Backend running on port ${PORT}`);
 });
