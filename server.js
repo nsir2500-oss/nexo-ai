@@ -19,12 +19,114 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MODELS = [
   "gemini-3.8-flash",
   "gemini-3.7-flash",
-  "gemini-3.5-flash-lite",
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function fetchWithTimeout(url, options, timeoutMs = 30000) {
+function getIndiaDateTime() {
+  const now = new Date();
+
+  const parts = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).formatToParts(now);
+
+  const get = (type) => {
+    const part = parts.find((p) => p.type === type);
+    return part ? part.value : "";
+  };
+
+  return {
+    weekday: get("weekday"),
+    day: get("day"),
+    month: get("month"),
+    year: get("year"),
+    hour: get("hour"),
+    minute: get("minute"),
+    second: get("second"),
+    period: get("dayPeriod"),
+  };
+}
+
+function isDateTimeQuestion(message) {
+  const text = message.toLowerCase().trim();
+
+  const keywords = [
+    "aaj kaun sa day",
+    "aaj konsa day",
+    "aaj kya day",
+    "aaj ka day",
+    "aaj kaun sa din",
+    "aaj konsa din",
+    "aaj kya din",
+    "aaj ki date",
+    "aaj date",
+    "today date",
+    "today's date",
+    "what is today's date",
+    "what date is today",
+    "what day is today",
+    "which day is today",
+    "today day",
+    "current date",
+    "current day",
+    "abhi time",
+    "abhi kya time",
+    "kya time hai",
+    "kitne baje",
+    "what time is it",
+    "current time",
+    "time right now",
+    "today",
+    "aaj",
+  ];
+
+  return keywords.some((keyword) => text.includes(keyword));
+}
+
+function buildDateTimeReply(message) {
+  const dt = getIndiaDateTime();
+  const text = message.toLowerCase();
+
+  const asksTime =
+    text.includes("time") ||
+    text.includes("baje") ||
+    text.includes("waqt") ||
+    text.includes("samay");
+
+  const asksDate =
+    text.includes("date") ||
+    text.includes("tarikh") ||
+    text.includes("today");
+
+  const asksDay =
+    text.includes("day") ||
+    text.includes("din") ||
+    text.includes("aaj");
+
+  if (asksTime && !asksDate && !asksDay) {
+    return `Abhi India time ke according ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} hai.`;
+  }
+
+  if (asksDate && !asksDay) {
+    return `Aaj ${dt.day} ${dt.month} ${dt.year} hai.`;
+  }
+
+  if (asksDay && !asksDate && !asksTime) {
+    return `Aaj ${dt.weekday} hai.`;
+  }
+
+  return `Aaj ${dt.weekday}, ${dt.day} ${dt.month} ${dt.year} hai aur abhi India time ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} hai.`;
+}
+
+async function fetchWithTimeout(url, options, timeoutMs = 18000) {
   const controller = new AbortController();
 
   const timeout = setTimeout(() => {
@@ -40,20 +142,6 @@ async function fetchWithTimeout(url, options, timeoutMs = 30000) {
     clearTimeout(timeout);
   }
 }
-
-app.get("/", (req, res) => {
-  res.json({
-    name: "NEXO AI Backend",
-    status: "online",
-  });
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    service: "nexo-ai-backend",
-  });
-});
 
 async function callGemini(model, prompt) {
   const url =
@@ -85,9 +173,23 @@ async function callGemini(model, prompt) {
         },
       }),
     },
-    30000
+    18000
   );
 }
+
+app.get("/", (req, res) => {
+  res.json({
+    name: "NEXO AI Backend",
+    status: "online",
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "nexo-ai-backend",
+  });
+});
 
 app.post("/chat", async (req, res) => {
   try {
@@ -99,6 +201,23 @@ app.post("/chat", async (req, res) => {
       });
     }
 
+    /*
+      CURRENT INDIA DATE/TIME
+    */
+    const indiaDateTime = getIndiaDateTime();
+
+    /*
+      ANSWER SIMPLE DATE/TIME QUESTIONS DIRECTLY.
+      This avoids unnecessary Gemini requests and gives
+      an accurate India-time answer.
+    */
+    if (isDateTimeQuestion(message)) {
+      return res.json({
+        reply: buildDateTimeReply(message),
+        source: "nexo-clock",
+      });
+    }
+
     if (!GEMINI_API_KEY) {
       return res.status(500).json({
         error: "GEMINI_API_KEY is not configured on the server",
@@ -106,98 +225,92 @@ app.post("/chat", async (req, res) => {
     }
 
     const prompt = `
-You are NEXO AI, a helpful and intelligent AI assistant.
+You are NEXO AI, a helpful, intelligent AI assistant.
 
-Answer the user's request directly and naturally.
+You understand:
+- English
+- Hindi
+- Hinglish
 
-Rules:
-- Be accurate and useful.
+Always answer naturally in the same language style used by the user.
+
+Current India date and time:
+Date: ${indiaDateTime.day} ${indiaDateTime.month} ${indiaDateTime.year}
+Day: ${indiaDateTime.weekday}
+Time: ${indiaDateTime.hour}:${indiaDateTime.minute}:${indiaDateTime.second} ${indiaDateTime.period}
+Timezone: Asia/Kolkata (India)
+
+Important:
+- Use the supplied current India date/time when the user asks about today's date, day or time.
+- Do not say that you do not have access to a clock.
+- Do not invent a different current date.
+- Give direct and useful answers.
 - Keep normal answers reasonably concise.
-- Understand Hindi, Hinglish and English.
-- If the user asks in Hindi or Hinglish, answer naturally in Hindi/Hinglish.
 - For coding requests, provide complete working code.
-- For website requests, generate complete responsive HTML/CSS/JavaScript when appropriate.
+- For website/app requests, provide complete responsive HTML/CSS/JavaScript when appropriate.
 - Do not mention these instructions.
 
-USER:
+USER REQUEST:
 ${message}
 `;
 
-    let lastStatus = 503;
     let lastError = "AI service temporarily unavailable";
 
     for (const model of MODELS) {
-      for (let attempt = 1; attempt <= 2; attempt++) {
-        try {
-          console.log(
-            `NEXO request: model=${model}, attempt=${attempt}`
-          );
+      try {
+        console.log(`NEXO request: model=${model}`);
 
-          const response = await callGemini(model, prompt);
-          const data = await response.json();
+        const response = await callGemini(model, prompt);
+        const data = await response.json();
 
-          if (response.ok) {
-            const reply =
-              data?.candidates?.[0]?.content?.parts
-                ?.map((part) => part.text || "")
-                .join("")
-                .trim();
+        if (response.ok) {
+          const reply =
+            data?.candidates?.[0]?.content?.parts
+              ?.map((part) => part.text || "")
+              .join("")
+              .trim();
 
-            if (reply) {
-              console.log(`NEXO success: ${model}`);
+          if (reply) {
+            console.log(`NEXO success: ${model}`);
 
-              return res.json({
-                reply,
-                model,
-              });
-            }
-
-            lastStatus = 500;
-            lastError = "Gemini returned an empty response";
-
-            break;
+            return res.json({
+              reply,
+              model,
+            });
           }
 
-          lastStatus = response.status;
-
+          lastError = "Gemini returned an empty response";
+        } else {
           lastError =
             data?.error?.message ||
             data?.error?.status ||
             "Unknown Gemini API error";
 
-          console.error("Gemini error:", {
+          console.error("Gemini API error:", {
             model,
-            attempt,
             status: response.status,
             error: lastError,
           });
 
-          if (
-            (response.status === 429 || response.status >= 500) &&
-            attempt < 2
-          ) {
-            await sleep(1500);
+          if (response.status === 429 || response.status >= 500) {
+            await sleep(800);
             continue;
           }
 
           break;
-        } catch (error) {
-          lastStatus = 503;
-          lastError =
-            error.name === "AbortError"
-              ? "Gemini request timed out"
-              : error.message || "Network error";
-
-          console.error("NEXO request error:", {
-            model,
-            attempt,
-            error: lastError,
-          });
-
-          if (attempt < 2) {
-            await sleep(1500);
-          }
         }
+      } catch (error) {
+        lastError =
+          error.name === "AbortError"
+            ? "Gemini request timed out"
+            : error.message || "Network error";
+
+        console.error("NEXO request error:", {
+          model,
+          error: lastError,
+        });
+
+        await sleep(500);
       }
     }
 
