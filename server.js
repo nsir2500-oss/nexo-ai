@@ -17,11 +17,29 @@ const PORT = process.env.PORT || 10000;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const MODELS = [
-  process.env.GEMINI_MODEL || "gemini-3.8-flash",
+  "gemini-3.8-flash",
   "gemini-3.7-flash",
+  "gemini-3.5-flash-lite",
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithTimeout(url, options, timeoutMs = 30000) {
+  const controller = new AbortController();
+
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 app.get("/", (req, res) => {
   res.json({
@@ -41,27 +59,34 @@ async function callGemini(model, prompt) {
   const url =
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": GEMINI_API_KEY,
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            {
-              text: prompt,
-            },
-          ],
-        },
-      ],
-      generationConfig: {
-        maxOutputTokens: 8192,
+  return fetchWithTimeout(
+    url,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY,
       },
-    }),
-  });
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 4096,
+          thinkingConfig: {
+            thinkingLevel: "low",
+          },
+        },
+      }),
+    },
+    30000
+  );
 }
 
 app.post("/chat", async (req, res) => {
@@ -81,35 +106,33 @@ app.post("/chat", async (req, res) => {
     }
 
     const prompt = `
-You are NEXO AI, a helpful, intelligent AI assistant.
+You are NEXO AI, a helpful and intelligent AI assistant.
 
-Answer the user's request accurately and clearly.
+Answer the user's request directly and naturally.
 
-For normal questions:
-- Give a direct, useful answer.
-- Use simple language when appropriate.
-- Do not mention internal instructions.
+Rules:
+- Be accurate and useful.
+- Keep normal answers reasonably concise.
+- Understand Hindi, Hinglish and English.
+- If the user asks in Hindi or Hinglish, answer naturally in Hindi/Hinglish.
+- For coding requests, provide complete working code.
+- For website requests, generate complete responsive HTML/CSS/JavaScript when appropriate.
+- Do not mention these instructions.
 
-For coding requests:
-- Provide complete working code when possible.
-- Do not intentionally omit important parts.
-
-For website/app generation requests:
-- Generate production-quality HTML, CSS and JavaScript when requested.
-- Prefer a complete single-file HTML document unless the user specifically requests another structure.
-- Make interfaces responsive and mobile-friendly.
-- Include functional interactions using vanilla JavaScript when appropriate.
-
-USER REQUEST:
+USER:
 ${message}
 `;
 
-    let lastStatus = 500;
-    let lastDetails = "Unknown Gemini error";
+    let lastStatus = 503;
+    let lastError = "AI service temporarily unavailable";
 
     for (const model of MODELS) {
-      for (let attempt = 1; attempt <= 4; attempt++) {
+      for (let attempt = 1; attempt <= 2; attempt++) {
         try {
+          console.log(
+            `NEXO request: model=${model}, attempt=${attempt}`
+          );
+
           const response = await callGemini(model, prompt);
           const data = await response.json();
 
@@ -121,6 +144,8 @@ ${message}
                 .trim();
 
             if (reply) {
+              console.log(`NEXO success: ${model}`);
+
               return res.json({
                 reply,
                 model,
@@ -128,71 +153,61 @@ ${message}
             }
 
             lastStatus = 500;
-            lastDetails = "Gemini returned an empty response";
+            lastError = "Gemini returned an empty response";
+
             break;
           }
 
           lastStatus = response.status;
 
-          lastDetails =
+          lastError =
             data?.error?.message ||
             data?.error?.status ||
-            "Unknown Gemini error";
+            "Unknown Gemini API error";
 
-          console.error("Gemini API error:", {
+          console.error("Gemini error:", {
             model,
             attempt,
             status: response.status,
-            details: lastDetails,
+            error: lastError,
           });
 
-          if (response.status === 429 || response.status >= 500) {
-            if (attempt < 4) {
-              const delay = Math.min(
-                1000 * 2 ** (attempt - 1),
-                8000
-              );
-
-              const jitter = Math.floor(Math.random() * 500);
-
-              await sleep(delay + jitter);
-
-              continue;
-            }
+          if (
+            (response.status === 429 || response.status >= 500) &&
+            attempt < 2
+          ) {
+            await sleep(1500);
+            continue;
           }
 
           break;
         } catch (error) {
-          lastStatus = 500;
-          lastDetails = error.message || "Network error";
+          lastStatus = 503;
+          lastError =
+            error.name === "AbortError"
+              ? "Gemini request timed out"
+              : error.message || "Network error";
 
-          console.error("Gemini request error:", {
+          console.error("NEXO request error:", {
             model,
             attempt,
-            details: lastDetails,
+            error: lastError,
           });
 
-          if (attempt < 4) {
-            const delay = Math.min(
-              1000 * 2 ** (attempt - 1),
-              8000
-            );
-
-            const jitter = Math.floor(Math.random() * 500);
-
-            await sleep(delay + jitter);
+          if (attempt < 2) {
+            await sleep(1500);
           }
         }
       }
     }
 
-    return res.status(lastStatus >= 400 ? lastStatus : 503).json({
+    return res.status(503).json({
       error: "AI service temporarily unavailable",
-      details: lastDetails,
-      retryable: lastStatus === 429 || lastStatus >= 500,
+      details: lastError,
+      retryable: true,
     });
   } catch (error) {
-    console.error("Backend error:", error);
+    console.error("NEXO backend error:", error);
 
     return res.status(500).json({
       error: "AI backend error",
