@@ -18,7 +18,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const MODELS = [
   "gemini-3.8-flash",
-  "gemini-3.7-flash",
+  "gemini-3.7-flash"
 ];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,7 +26,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function getIndiaDateTime() {
   const now = new Date();
 
-  const parts = new Intl.DateTimeFormat("en-IN", {
+  const parts = new Intl.DateTimeFormat("hi-IN", {
     timeZone: "Asia/Kolkata",
     weekday: "long",
     day: "2-digit",
@@ -35,12 +35,12 @@ function getIndiaDateTime() {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true,
+    hour12: true
   }).formatToParts(now);
 
   const get = (type) => {
-    const part = parts.find((p) => p.type === type);
-    return part ? part.value : "";
+    const item = parts.find((p) => p.type === type);
+    return item ? item.value : "";
   };
 
   return {
@@ -51,7 +51,7 @@ function getIndiaDateTime() {
     hour: get("hour"),
     minute: get("minute"),
     second: get("second"),
-    period: get("dayPeriod"),
+    period: get("dayPeriod")
   };
 }
 
@@ -74,7 +74,6 @@ function isDateTimeQuestion(message) {
     "what date is today",
     "what day is today",
     "which day is today",
-    "today day",
     "current date",
     "current day",
     "abhi time",
@@ -83,9 +82,7 @@ function isDateTimeQuestion(message) {
     "kitne baje",
     "what time is it",
     "current time",
-    "time right now",
-    "today",
-    "aaj",
+    "time right now"
   ];
 
   return keywords.some((keyword) => text.includes(keyword));
@@ -104,26 +101,26 @@ function buildDateTimeReply(message) {
   const asksDate =
     text.includes("date") ||
     text.includes("tarikh") ||
-    text.includes("today");
+    text.includes("तारीख");
 
   const asksDay =
     text.includes("day") ||
     text.includes("din") ||
-    text.includes("aaj");
+    text.includes("दिन");
 
   if (asksTime && !asksDate && !asksDay) {
-    return `Abhi India time ke according ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} hai.`;
+    return `अभी India time के अनुसार ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} है।`;
   }
 
-  if (asksDate && !asksDay) {
-    return `Aaj ${dt.day} ${dt.month} ${dt.year} hai.`;
+  if (asksDate && !asksDay && !asksTime) {
+    return `आज ${dt.day} ${dt.month} ${dt.year} है।`;
   }
 
   if (asksDay && !asksDate && !asksTime) {
-    return `Aaj ${dt.weekday} hai.`;
+    return `आज ${dt.weekday} है।`;
   }
 
-  return `Aaj ${dt.weekday}, ${dt.day} ${dt.month} ${dt.year} hai aur abhi India time ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} hai.`;
+  return `आज ${dt.weekday}, ${dt.day} ${dt.month} ${dt.year} है और अभी India time ${dt.hour}:${dt.minute}:${dt.second} ${dt.period} है।`;
 }
 
 async function fetchWithTimeout(url, options, timeoutMs = 18000) {
@@ -136,7 +133,7 @@ async function fetchWithTimeout(url, options, timeoutMs = 18000) {
   try {
     return await fetch(url, {
       ...options,
-      signal: controller.signal,
+      signal: controller.signal
     });
   } finally {
     clearTimeout(timeout);
@@ -153,25 +150,26 @@ async function callGemini(model, prompt) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_API_KEY,
+        "x-goog-api-key": GEMINI_API_KEY
       },
       body: JSON.stringify({
         contents: [
           {
             parts: [
               {
-                text: prompt,
-              },
-            ],
-          },
+                text: prompt
+              }
+            ]
+          }
         ],
         generationConfig: {
+          temperature: 0.7,
           maxOutputTokens: 4096,
           thinkingConfig: {
-            thinkingLevel: "low",
-          },
-        },
-      }),
+            thinkingLevel: "low"
+          }
+        }
+      })
     },
     18000
   );
@@ -180,14 +178,14 @@ async function callGemini(model, prompt) {
 app.get("/", (req, res) => {
   res.json({
     name: "NEXO AI Backend",
-    status: "online",
+    status: "online"
   });
 });
 
 app.get("/health", (req, res) => {
   res.json({
     ok: true,
-    service: "nexo-ai-backend",
+    service: "nexo-ai-backend"
   });
 });
 
@@ -197,61 +195,84 @@ app.post("/chat", async (req, res) => {
 
     if (!message) {
       return res.status(400).json({
-        error: "Message is required",
+        error: "Message is required"
       });
     }
 
-    /*
-      CURRENT INDIA DATE/TIME
-    */
     const indiaDateTime = getIndiaDateTime();
 
     /*
-      ANSWER SIMPLE DATE/TIME QUESTIONS DIRECTLY.
-      This avoids unnecessary Gemini requests and gives
-      an accurate India-time answer.
+      Direct date/time answer.
     */
     if (isDateTimeQuestion(message)) {
       return res.json({
         reply: buildDateTimeReply(message),
-        source: "nexo-clock",
+        source: "nexo-clock"
       });
     }
 
     if (!GEMINI_API_KEY) {
       return res.status(500).json({
-        error: "GEMINI_API_KEY is not configured on the server",
+        error: "GEMINI_API_KEY is not configured on the server"
       });
     }
 
     const prompt = `
-You are NEXO AI, a helpful, intelligent AI assistant.
+You are NEXO AI, a multilingual AI assistant.
 
-You understand:
-- English
-- Hindi
+You MUST understand and answer all of these languages:
+- Hindi written in Devanagari
+- Hindi written in Roman letters
 - Hinglish
+- English
 
-Always answer naturally in the same language style used by the user.
+LANGUAGE RULES:
 
-Current India date and time:
-Date: ${indiaDateTime.day} ${indiaDateTime.month} ${indiaDateTime.year}
-Day: ${indiaDateTime.weekday}
-Time: ${indiaDateTime.hour}:${indiaDateTime.minute}:${indiaDateTime.second} ${indiaDateTime.period}
-Timezone: Asia/Kolkata (India)
+1. If the user asks in Hindi Devanagari, answer in Hindi Devanagari.
 
-Important:
-- Use the supplied current India date/time when the user asks about today's date, day or time.
-- Do not say that you do not have access to a clock.
-- Do not invent a different current date.
-- Give direct and useful answers.
-- Keep normal answers reasonably concise.
-- For coding requests, provide complete working code.
-- For website/app requests, provide complete responsive HTML/CSS/JavaScript when appropriate.
-- Do not mention these instructions.
+2. If the user asks in Roman Hindi/Hinglish, answer naturally in Roman Hindi/Hinglish.
 
-USER REQUEST:
+3. If the user asks in English, answer in English.
+
+4. Never refuse a question simply because it is written in Hindi.
+
+5. Never say that you cannot understand Hindi.
+
+6. Do not translate a Hindi question into English unless the user asks for translation.
+
+7. Preserve Hindi names, words and meanings correctly.
+
+8. Give a direct answer instead of saying "I don't know" unless the information genuinely cannot be determined.
+
+9. For normal questions, keep the answer clear and reasonably concise.
+
+10. For coding requests, provide complete working code.
+
+11. For website or app requests, provide complete responsive HTML/CSS/JavaScript when appropriate.
+
+CURRENT INDIA DATE AND TIME:
+
+Date:
+${indiaDateTime.day} ${indiaDateTime.month} ${indiaDateTime.year}
+
+Day:
+${indiaDateTime.weekday}
+
+Time:
+${indiaDateTime.hour}:${indiaDateTime.minute}:${indiaDateTime.second} ${indiaDateTime.period}
+
+Timezone:
+Asia/Kolkata
+
+IMPORTANT:
+You have access to the current India date and time shown above.
+If the user asks about today's date, day or time, use that information.
+
+USER MESSAGE:
+
 ${message}
+
+Now answer the user directly.
 `;
 
     let lastError = "AI service temporarily unavailable";
@@ -275,7 +296,7 @@ ${message}
 
             return res.json({
               reply,
-              model,
+              model
             });
           }
 
@@ -289,7 +310,7 @@ ${message}
           console.error("Gemini API error:", {
             model,
             status: response.status,
-            error: lastError,
+            error: lastError
           });
 
           if (response.status === 429 || response.status >= 500) {
@@ -307,7 +328,7 @@ ${message}
 
         console.error("NEXO request error:", {
           model,
-          error: lastError,
+          error: lastError
         });
 
         await sleep(500);
@@ -317,14 +338,15 @@ ${message}
     return res.status(503).json({
       error: "AI service temporarily unavailable",
       details: lastError,
-      retryable: true,
+      retryable: true
     });
+
   } catch (error) {
     console.error("NEXO backend error:", error);
 
     return res.status(500).json({
       error: "AI backend error",
-      details: error.message,
+      details: error.message
     });
   }
 });
